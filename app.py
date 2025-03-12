@@ -16,14 +16,14 @@ stripe_public_key = "your_stripe_public_key"  # Replace with your Stripe public 
 # Manual product catalog
 products = {
     "clothes": [
-        {"id": 1, "name": "Basic T-Shirt", "price": 5.99, "image": "/static/images/tshirt.jpg", "description": "Comfortable cotton t-shirt, available in multiple colors."},
-        {"id": 2, "name": "Workout Leggings", "price": 12.99, "image": "/static/images/leggings.jpg", "description": "Stretchable leggings for gym or casual wear."}
+        {"id": 1, "name": "Basic T-Shirt", "price": 1999.00, "image": "/static/images/tshirt.jpg", "description": "Comfortable cotton t-shirt, available in multiple colors."},
+        {"id": 2, "name": "Workout Leggings", "price": 4999.00, "image": "/static/images/leggings.jpg", "description": "Stretchable leggings for gym or casual wear."}
     ],
     "shoes": [
-        {"id": 3, "name": "Running Shoes", "price": 19.99, "image": "/static/images/runningshoes.jpg", "description": "Lightweight shoes for running and training."}
+        {"id": 3, "name": "Running Shoes", "price": 7999.00, "image": "/static/images/runningshoes.jpg", "description": "Lightweight shoes for running and training."}
     ],
     "wristwatches": [
-        {"id": 4, "name": "Classic Watch", "price": 9.99, "image": "/static/images/watch.jpg", "description": "Stylish analog watch with leather strap."}
+        {"id": 4, "name": "Classic Watch", "price": 3999.00, "image": "/static/images/watch.jpg", "description": "Stylish analog watch with leather strap."}
     ]
 }
 
@@ -53,22 +53,23 @@ def pay(product_id):
     try:
         product = next((item for category in products.values() for item in category if item["id"] == product_id), None)
         if not product:
-            return "Product not found", 404
+            return jsonify({"error": "Product not found"}), 404
         
-        # Create a Stripe Checkout Session
+        # Create a Stripe Checkout Session with NGN currency
         session = stripe.checkout.Session.create(
-            payment_method_types=["card"],
+            payment_method_types=["card"],  # Supports Mastercard and Verve
             line_items=[{
                 "price_data": {
-                    "currency": "usd",
-                    "product_data": {"name": product["name"]},
-                    "unit_amount": int(product["price"] * 100),  # Convert to cents
+                    "currency": "ngn",
+                    "product_data": {"name": product["name"], "description": product["description"]},
+                    "unit_amount": int(product["price"] * 100),  # Convert to kobo (NGN cents)
                 },
                 "quantity": 1,
             }],
             mode="payment",
             success_url=url_for("success", _external=True),
             cancel_url=url_for("cancel", _external=True),
+            metadata={"product_id": str(product_id), "brand": "Contour"},
         )
         return jsonify({"sessionId": session.id})
     except Exception as e:
@@ -84,5 +85,4 @@ def cancel():
     return render_template("cancel.html")
 
 if __name__ == "__main__":
-    # Only run the development server if this script is executed directly
     app.run(host="0.0.0.0", port=5000, debug=True)
