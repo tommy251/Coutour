@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from chromedriver_autoinstaller import install as install_chromedriver
-from bs4 import BeautifulSoup  # Add this import
+from bs4 import BeautifulSoup
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)  # Changed to DEBUG for more detail
@@ -23,6 +23,7 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")  # Mimic browser
+chrome_options.binary_location = "/usr/bin/google-chrome"  # Specify Chrome binary location for Render
 
 # Categories to scrape from Jumia
 categories = {
@@ -39,7 +40,7 @@ def scrape_cheapest(category_url):
         driver.get(category_url)
         logger.debug("Page loaded, waiting for products...")
 
-        # Wait for products to load
+        # Wait for products to load (increased timeout to 60 seconds)
         WebDriverWait(driver, 60).until(
             EC.presence_of_element_located((By.CLASS_NAME, "prd"))
         )
@@ -80,10 +81,10 @@ def scrape_cheapest(category_url):
 @app.route("/")
 def serve_index():
     try:
-        logger.debug("Attempting to render cout.html")
-        return render_template("cout.html")
+        logger.debug("Attempting to render index.html")
+        return render_template("index.html")  # Changed from cout.html to index.html
     except Exception as e:
-        logger.error(f"Failed to render cout.html: {e}")
+        logger.error(f"Failed to render index.html: {e}")
         return "Error rendering template", 500
 
 # Serve static files
@@ -107,4 +108,5 @@ def get_cheapest(category):
     return jsonify(cheapest_item)
 
 if __name__ == "__main__":
+    # Only run the development server if this script is executed directly
     app.run(host="0.0.0.0", port=5000, debug=True)
