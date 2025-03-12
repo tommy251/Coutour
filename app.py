@@ -55,14 +55,13 @@ def pay(product_id):
         if not product:
             return jsonify({"error": "Product not found"}), 404
         
-        # Create a Stripe Checkout Session with NGN currency
         session = stripe.checkout.Session.create(
-            payment_method_types=["card"],  # Supports Mastercard and Verve
+            payment_method_types=["card"],
             line_items=[{
                 "price_data": {
                     "currency": "ngn",
                     "product_data": {"name": product["name"], "description": product["description"]},
-                    "unit_amount": int(product["price"] * 100),  # Convert to kobo (NGN cents)
+                    "unit_amount": int(product["price"] * 100),
                 },
                 "quantity": 1,
             }],

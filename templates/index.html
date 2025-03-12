@@ -43,8 +43,9 @@
     </section>
 
     <!-- Pass the Stripe public key as a data attribute -->
+   <!-- At the bottom of index.html, before script.js -->
     <script>
-        window.stripePublicKey = '{{ stripe_public_key }}';
+    window.stripePublicKey = '{{ stripe_public_key }}';
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
