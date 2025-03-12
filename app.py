@@ -5,7 +5,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from chromedriver_autoinstaller import install as install_chromedriver
 from bs4 import BeautifulSoup
 import os
 
@@ -16,13 +15,14 @@ logger = logging.getLogger(__name__)
 # Initialize Flask app
 app = Flask(__name__)
 
-# Set up headless Chrome for scraping
+# Set up headless Chrome options (Chrome binary is optional since we’re using a manual ChromeDriver)
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-chrome_options.binary_location = "/usr/bin/google-chrome"  # Specify Chrome binary location for Render
+# Comment out binary_location since Chrome isn’t installed on Render
+# chrome_options.binary_location = "/usr/bin/google-chrome"
 
 # Categories to scrape from Jumia
 categories = {
@@ -31,28 +31,17 @@ categories = {
     "wristwatches": "https://www.jumia.com.ng/mens-watches/"
 }
 
-def ensure_chromedriver():
-    """Ensure ChromeDriver is installed and compatible with the specified Chrome version."""
-    try:
-        # Attempt to install ChromeDriver
-        install_chromedriver()
-        logger.debug("ChromeDriver installed successfully")
-    except ValueError as e:
-        logger.error(f"ChromeDriver auto-install failed: {e}")
-        # Fallback: Manually specify a compatible ChromeDriver version (e.g., for Chrome 91)
-        from webdriver_manager.chrome import ChromeDriverManager
-        os.system("wget https://chromedriver.storage.googleapis.com/91.0.4472.124/chromedriver_linux64.zip")
-        os.system("unzip chromedriver_linux64.zip -d .")
-        os.system("chmod +x chromedriver")
-        os.system("mv chromedriver /usr/local/bin/chromedriver")
-        logger.debug("ChromeDriver installed manually")
-
 def scrape_cheapest(category_url):
     driver = None
     try:
-        ensure_chromedriver()  # Install ChromeDriver when scraping is needed
         logger.debug(f"Starting scraping for URL: {category_url}")
-        driver = webdriver.Chrome(options=chrome_options)
+        # Specify the path to the manually included ChromeDriver
+        chromedriver_path = os.path.join(os.path.dirname(__file__), "chromedriver")
+        if not os.path.exists(chromedriver_path):
+            logger.error(f"ChromeDriver not found at {chromedriver_path}")
+            return {"name": "Scraping failed", "price": 0, "url": category_url, "error": "ChromeDriver not found"}
+
+        driver = webdriver.Chrome(executable_path=chromedriver_path, options=chrome_options)
         driver.get(category_url)
         logger.debug("Page loaded, waiting for products...")
 
@@ -88,7 +77,7 @@ def scrape_cheapest(category_url):
         return cheapest_item if cheapest_item else {"name": "Not found", "price": 0, "url": category_url}
     except Exception as e:
         logger.error(f"Error scraping {category_url}: {e}")
-        return {"name": "Scraping failed", "price": 0, "url": category_url}
+        return {"name": "Scraping failed", "price": 0, "url": category_url, "error": str(e)}
     finally:
         if driver:
             driver.quit()
