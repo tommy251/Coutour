@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contour - Affordable Fashion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Navigation Bar (Inspired by atafrica.org) -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header>
+        <h1>Welcome to Contour</h1>
+        <p>Affordable Fashion for Everyone - Wear It Like You Mean It!</p>
+        <div class="sales-banner">Up to 50% Off This Week!</div>
+    </header>
+
+    <!-- Product Catalog (Inspired by beactivewear.com.au) -->
+    <section id="shop">
+        <h2>Our Products</h2>
+        <div class="product-grid">
+            {% for category, items in products.items() %}
+                {% for item in items %}
+                    <div class="product-card">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                        <h3>{{ item.name }}</h3>
+                        <p>{{ item.description }}</p>
+                        <p class="price">$ {{ item.price }}</p>
+                        <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+    </script>
+</body>
+</html>
