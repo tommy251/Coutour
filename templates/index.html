@@ -42,9 +42,10 @@
         </div>
     </section>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- Pass the Stripe public key as a data attribute -->
     <script>
-        const stripe = Stripe('{{ stripe_public_key }}');
+        window.stripePublicKey = '{{ stripe_public_key }}';
     </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

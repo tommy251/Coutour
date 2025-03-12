@@ -1,3 +1,6 @@
+// Initialize Stripe with the public key from the global variable
+const stripe = Stripe(window.stripePublicKey);
+
 async function orderProduct(productId) {
     try {
         const response = await fetch(`/pay/${productId}`, {
