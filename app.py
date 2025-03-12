@@ -7,12 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from chromedriver_autoinstaller import install as install_chromedriver
 from bs4 import BeautifulSoup
+import os
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)  # Changed to DEBUG for more detail
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-install_chromedriver()  # Automatically installs ChromeDriver
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -22,7 +21,7 @@ chrome_options = Options()
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")  # Mimic browser
+chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 chrome_options.binary_location = "/usr/bin/google-chrome"  # Specify Chrome binary location for Render
 
 # Categories to scrape from Jumia
@@ -32,9 +31,26 @@ categories = {
     "wristwatches": "https://www.jumia.com.ng/mens-watches/"
 }
 
+def ensure_chromedriver():
+    """Ensure ChromeDriver is installed and compatible with the specified Chrome version."""
+    try:
+        # Attempt to install ChromeDriver
+        install_chromedriver()
+        logger.debug("ChromeDriver installed successfully")
+    except ValueError as e:
+        logger.error(f"ChromeDriver auto-install failed: {e}")
+        # Fallback: Manually specify a compatible ChromeDriver version (e.g., for Chrome 91)
+        from webdriver_manager.chrome import ChromeDriverManager
+        os.system("wget https://chromedriver.storage.googleapis.com/91.0.4472.124/chromedriver_linux64.zip")
+        os.system("unzip chromedriver_linux64.zip -d .")
+        os.system("chmod +x chromedriver")
+        os.system("mv chromedriver /usr/local/bin/chromedriver")
+        logger.debug("ChromeDriver installed manually")
+
 def scrape_cheapest(category_url):
     driver = None
     try:
+        ensure_chromedriver()  # Install ChromeDriver when scraping is needed
         logger.debug(f"Starting scraping for URL: {category_url}")
         driver = webdriver.Chrome(options=chrome_options)
         driver.get(category_url)
@@ -82,7 +98,7 @@ def scrape_cheapest(category_url):
 def serve_index():
     try:
         logger.debug("Attempting to render index.html")
-        return render_template("index.html")  # Changed from cout.html to index.html
+        return render_template("index.html")
     except Exception as e:
         logger.error(f"Failed to render index.html: {e}")
         return "Error rendering template", 500
