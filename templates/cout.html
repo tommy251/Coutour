@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contour - Cheapest Finds</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Contour</h1>
+    <p>Find the cheapest items from Jumia!</p>
+    <button onclick="fetchCheapest('shoes')">Cheapest Shoes</button>
+    <button onclick="fetchCheapest('clothes')">Cheapest Clothes</button>
+    <button onclick="fetchCheapest('wristwatches')">Cheapest Wristwatches</button>
+    <div id="result"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

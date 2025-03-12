@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+    background-image: url('/static/flowing-liquid.gif');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #00FFFF; /* Neon cyan */
+    text-shadow: 0 0 10px #00FFFF, 0 0 20px #FF00FF; /* Glow with magenta accent */
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+    text-shadow: 0 0 5px #00FFFF;
+}
+
+button {
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    background: #00FFFF; /* Neon cyan */
+    border: 2px solid #FF00FF; /* Magenta border */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px #00FFFF;
+}
+
+button:hover {
+    background: #FF00FF; /* Magenta on hover */
+    color: #00FFFF; /* Neon cyan text */
+    box-shadow: 0 0 20px #FF00FF;
+    transform: scale(1.05);
+}
+
+#result {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    border-radius: 10px;
+    text-align: center;
+    max-width: 600px;
+}
+
+#result h3 {
+    font-size: 1.8rem;
+    color: #00FFFF;
+    margin-bottom: 10px;
+}
+
+#result p {
+    font-size: 1.2rem;
+    color: #FFFFFF;
+}
+
+#result a {
+    color: #FF00FF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#result a:hover {
+    text-decoration: underline;
+    color: #00FFFF;
+}
