@@ -8,7 +8,7 @@
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-    <!-- Navigation Bar (Inspired by atafrica.org) -->
+    <!-- Navigation Bar -->
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
@@ -24,7 +24,7 @@
         <div class="sales-banner">Up to 50% Off This Week!</div>
     </header>
 
-    <!-- Product Catalog (Inspired by beactivewear.com.au) -->
+    <!-- Product Catalog -->
     <section id="shop">
         <h2>Our Products</h2>
         <div class="product-grid">
@@ -34,7 +34,7 @@
                         <img src="{{ item.image }}" alt="{{ item.name }}">
                         <h3>{{ item.name }}</h3>
                         <p>{{ item.description }}</p>
-                        <p class="price">$ {{ item.price }}</p>
+                        <p class="price">₦ {{ item.price }}</p>
                         <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                     </div>
                 {% endfor %}

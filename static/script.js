@@ -13,8 +13,12 @@ async function orderProduct(productId) {
             return;
         }
 
-        // Redirect to Stripe Checkout
-        stripe.redirectToCheckout({ sessionId: data.sessionId });
+        // Redirect to Stripe Checkout (supports Mastercard and Verve)
+        stripe.redirectToCheckout({ sessionId: data.sessionId }).then(result => {
+            if (result.error) {
+                alert(`Payment error: ${result.error.message}`);
+            }
+        });
     } catch (error) {
         alert(`Failed to initiate payment: ${error.message}`);
         console.error("Payment error:", error);
