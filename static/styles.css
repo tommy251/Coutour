@@ -6,6 +6,7 @@ body {
     color: #333;
 }
 
+/* Navigation Bar with Hamburger Menu */
 nav {
     background-color: #1a2526;
     padding: 1rem;
@@ -14,29 +15,74 @@ nav {
     top: 0;
     z-index: 1000;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
 }
 
-nav ul {
-    list-style: none;
+.logo h3 {
+    color: white;
+    margin: 0 0 0 1rem;
+    font-size: 1.2rem;
+}
+
+.hamburger {
+    display: block;
+    cursor: pointer;
+    margin-right: 1rem;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.nav-links {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #1a2526;
+    width: 200px;
+    height: auto;
     display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
 }
 
-nav ul li {
-    margin: 0 1rem;
+.nav-links.active {
+    transform: translateX(0);
 }
 
-nav ul li a {
+.nav-links li {
+    margin: 1rem 0;
+    list-style: none;
+}
+
+.nav-links li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
     text-transform: uppercase;
 }
 
-nav ul li a:hover {
+.nav-links li a:hover {
     color: #d4af37;
 }
 
