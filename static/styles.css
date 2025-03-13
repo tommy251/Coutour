@@ -52,113 +52,76 @@ nav ul li a:hover {
     align-items: center;
 }
 
-/* Home Section (Adidas-Inspired) */
+/* Home Section (Contour Style - Blvck Tumbler Inspired) */
 #home {
     background: linear-gradient(135deg, #1a2526 0%, #2e3b3e 100%);
-    color: #d4af37; /* Gold accent */
+    color: white;
     position: relative;
 }
 
 .home-hero {
-    max-width: 800px;
+    max-width: 1200px;
     width: 100%;
     text-align: center;
     position: relative;
     z-index: 1;
 }
 
-.background-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
-    opacity: 0.3; /* Subtle transparency to simulate text in the background */
-    text-align: center;
-    width: 100%;
-    pointer-events: none; /* Prevent text from interfering with clicks */
-}
-
-.background-text h1 {
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 0;
-    color: #d4af37;
-}
-
-.background-text h2 {
+.main-title {
     font-size: 6rem;
     font-weight: bold;
     text-transform: uppercase;
-    margin: 0;
-    color: #d4af37;
+    margin-bottom: 2rem;
+    color: white;
+    position: relative;
+    z-index: 1;
 }
 
-.hero-shoe {
-    max-width: 500px;
+.hero-tumbler {
+    max-width: 300px;
     width: 100%;
     position: relative;
-    z-index: 2; /* Bring the image in front of the text */
-    margin: 0 auto; /* Center the image horizontally */
+    z-index: 2;
+    margin: 0 auto 2rem;
 }
 
 .home-details {
-    position: relative;
-    z-index: 2; /* Keep details in front of text */
-    margin-top: 1rem; /* Space between image and details */
-}
-
-.color-options {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
 }
 
-.color-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #d4af37;
+.home-details .detail-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 300px;
+    text-align: left;
 }
 
-.color-name {
-    font-size: 1rem;
-    text-transform: uppercase;
-    color: white;
-    margin: 0.5rem 0;
+.home-details .detail-box h3 {
+    font-size: 1.2rem;
+    color: #ff5733; /* Orange accent */
+    margin-bottom: 0.5rem;
 }
 
-.reserve-btn, .learn-more-btn {
-    padding: 0.75rem 2rem;
-    margin: 0.5rem;
-    border-radius: 25px;
-    border: 2px solid #d4af37;
-    background: none;
-    color: #d4af37;
+.home-details .detail-box p {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.home-details .detail-box .video-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: #ff5733;
+    text-decoration: none;
     font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s;
 }
 
-.reserve-btn:hover, .learn-more-btn:hover {
-    background: #d4af37;
-    color: #1a2526;
-}
-
-/* Add background wave effect similar to the image */
-#home::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('/static/hoe.png') repeat;
-    opacity: 0.1;
-    z-index: 0;
+.home-details .detail-box .video-link:hover {
+    text-decoration: underline;
 }
 
 /* Shop Section (Nike-Inspired) */
