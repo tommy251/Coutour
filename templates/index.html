@@ -8,91 +8,96 @@
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!-- Navigation Bar with Hamburger Menu -->
     <nav>
-        <ul>
+        <div class="logo">
+            <h3>Contour.</h3>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
             <li><a href="#home" onclick="showSection('home')">Home</a></li>
             <li><a href="#shop" onclick="showSection('shop')">Shop</a></li>
             <li><a href="#contact" onclick="showSection('contact')">Contact</a></li>
         </ul>
     </nav>
 
-    <!-- Home Section (Adidas-Inspired Design) -->
+    <!-- Home Section (Blvck Tumbler Design) -->
+    <!-- Home Section (Contour-Focused Design) -->
 <section id="home" class="section">
     <div class="home-hero">
-        <div class="background-text">
-            <h1>THE PURE COMFORT IS HERE.</h1>
-            <h2>Deept.</h2>
-        </div>
-        <img src="/static/hoe.png" alt="Hero Shoe" class="hero-shoe">
+        <h1 class="main-title">Contour Style</h1>
+        <img src="/static/images/hero-watch.jpg" alt="Contour Watch" class="hero-tumbler">
         <div class="home-details">
-            <div class="color-options">
-                <span class="color-dot" style="background-color: white;"></span>
-                <span class="color-dot" style="background-color: gray;"></span>
-                <span class="color-dot" style="background-color: black;"></span>
-                <span class="color-dot" style="background-color: gold;"></span>
+            <div class="detail-box">
+                <h3>Fashion Enthusiasts:</h3>
+                <p>Elevate your wardrobe with Contour’s curated collection of stylish clothes and wristwatches.</p>
             </div>
-            <p class="color-name">CORE BLACK</p>
-            <button class="reserve-btn">RESERVE NOW</button>
-            <button class="learn-more-btn">LEARN MORE</button>
+            <div class="detail-box">
+                <h3>Our Design:</h3>
+                <p>Discover the craftsmanship behind Contour’s timeless pieces. Watch our story unfold.</p>
+                <a href="#" class="video-link">Watch Video</a>
+            </div>
         </div>
     </div>
 </section>
 
     <!-- Shop Section (Nike-Inspired Design) -->
-<section id="shop" class="section" style="display: none;">
-    <div class="shop-hero">
-        <h1>ELEVATE YOUR STYLE WITH CONTOUR</h1>
-        <p>Discover the best in men's fashion with our curated collection of clothes and wristwatches, designed for style and comfort.</p>
-        <div class="shop-hero-details">
-            <div class="detail-box">
-                <h3>Comfort</h3>
-                <p>Our clothes are crafted with premium fabrics for all-day comfort.</p>
+    <section id="shop" class="section" style="display: none;">
+        <div class="shop-hero">
+            <h1>ELEVATE YOUR STYLE WITH CONTOUR</h1>
+            <p>Discover the best in men's fashion with our curated collection of clothes and wristwatches, designed for style and comfort.</p>
+            <div class="shop-hero-details">
+                <div class="detail-box">
+                    <h3>Comfort</h3>
+                    <p>Our clothes are crafted with premium fabrics for all-day comfort.</p>
+                </div>
+                <div class="detail-box">
+                    <h3>Style</h3>
+                    <p>Timeless wristwatches and trendy apparel to match any look.</p>
+                </div>
+                <div class="detail-box">
+                    <h3>Why Choose Us</h3>
+                    <p>High-quality men’s fashion at affordable prices, with designs that elevate your wardrobe.</p>
+                </div>
             </div>
-            <div class="detail-box">
-                <h3>Style</h3>
-                <p>Timeless wristwatches and trendy apparel to match any look.</p>
-            </div>
-            <div class="detail-box">
-                <h3>Why Choose Us</h3>
-                <p>High-quality men’s fashion at affordable prices, with designs that elevate your wardrobe.</p>
-            </div>
+            <img src="/static/hotty.jpeg" alt="Shop Hero Watch" class="shop-hero-shoe">
         </div>
-        <img src="/static/hotty.jpeg" alt="Shop Hero Watch" class="shop-hero-shoe">
-    </div>
-    <div class="hot-deals">
-        <h2>Hot Deals</h2>
-        <div class="product-grid">
-            {% for category, items in products.items() %}
-                {% for item in items %}
-                    <div class="product-card">
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
-                        <h3>{{ item.name }}</h3>
-                        <p>{{ item.description }}</p>
-                        <p class="price">₦ {{ item.price }}</p>
-                        <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
-                    </div>
+        <div class="hot-deals">
+            <h2>Hot Deals</h2>
+            <div class="product-grid">
+                {% for category, items in products.items() %}
+                    {% for item in items %}
+                        <div class="product-card">
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                            <h3>{{ item.name }}</h3>
+                            <p>{{ item.description }}</p>
+                            <p class="price">₦ {{ item.price }}</p>
+                            <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                        </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Contact Section -->
-    <!-- Contact Section -->
-<section id="contact" class="section" style="display: none;">
-    <h1>Contact Us</h1>
-    <p>Have any questions? Reach out to us!</p>
-    <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <textarea name="message" placeholder="Message" required></textarea>
-        <button type="submit">Send Message</button>
-    </form>
-    {% if message_sent %}
-        <p class="success-message">Thank you! Your message has been sent.</p>
-    {% endif %}
-</section>
+    <section id="contact" class="section" style="display: none;">
+        <h1>Contact Us</h1>
+        <p>Have any questions? Reach out to us!</p>
+        <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" placeholder="Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        {% if message_sent %}
+            <p class="success-message">Thank you! Your message has been sent.</p>
+        {% endif %}
+    </section>
 
     <!-- Success Section -->
     <section id="success" class="section" style="display: none;">
@@ -108,7 +113,7 @@
         <a href="#shop" onclick="showSection('shop')">Back to Shop</a>
     </section>
 
-    <!-- Pass the Stripe public key as a data attribute -->
+    <!-- JavaScript for Navigation and Menu Toggle -->
     <script>
         window.stripePublicKey = '{{ stripe_public_key }}';
         function showSection(sectionId) {
@@ -121,6 +126,13 @@
         // Show Home section by default
         document.addEventListener('DOMContentLoaded', () => {
             showSection('home');
+        });
+        // Toggle hamburger menu
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('open');
         });
     </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
