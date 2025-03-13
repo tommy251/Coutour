@@ -25,61 +25,67 @@
         </ul>
     </nav>
 
-    <!-- Home Section (Contour-Focused Design) -->
+    <!-- Home Section (ZOHO-Inspired Hero Section) -->
     <section id="home" class="section">
-        <div class="home-hero">
-            <h1 class="main-title">Contour Style</h1>
-            <img src="/static/hit.png" alt="Contour Watch" class="hero-tumbler">
-            <div class="home-details">
-                <div class="detail-box">
-                    <h3>Fashion Enthusiasts:</h3>
-                    <p>Elevate your wardrobe with Contour’s curated collection of stylish clothes and wristwatches.</p>
-                </div>
-                <div class="detail-box">
-                    <h3>Our Design:</h3>
-                    <p>Discover the craftsmanship behind Contour’s timeless pieces. Watch our story unfold.</p>
-                    <a href="#" class="video-link">Watch Video</a>
-                </div>
+        <div class="hero-section">
+            <img src="/static/man.png" alt="Contour Hero Banner" class="hero-image">
+            <div class="hero-content">
+                <h1>Contour</h1>
+                <a href="#shop" onclick="showSection('shop')" class="shop-now-btn">Shop Now</a>
             </div>
         </div>
-    </section>
 
-    <!-- Shop Section (Nike-Inspired Design) -->
-    <section id="shop" class="section" style="display: none;">
-        <div class="shop-hero">
-            <h1>ELEVATE YOUR STYLE WITH CONTOUR</h1>
-            <p>Discover the best in men's fashion with our curated collection of clothes and wristwatches, designed for style and comfort.</p>
-            <div class="shop-hero-details">
-                <div class="detail-box">
-                    <h3>Comfort</h3>
-                    <p>Our clothes are crafted with premium fabrics for all-day comfort.</p>
+        <!-- Category Section -->
+        <div class="category-section">
+            <h2>Explore Categories</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <img src="/static/men.jpeg" alt="Men's Clothing">
+                    <h3>Men's Clothing</h3>
                 </div>
-                <div class="detail-box">
-                    <h3>Style</h3>
-                    <p>Timeless wristwatches and trendy apparel to match any look.</p>
-                </div>
-                <div class="detail-box">
-                    <h3>Why Choose Us</h3>
-                    <p>High-quality men’s fashion at affordable prices, with designs that elevate your wardrobe.</p>
+                <div class="category-card">
+                    <img src="/static/Blacksuit.jpeg" alt="Wristwatches">
+                    <h3>Wristwatches</h3>
                 </div>
             </div>
-            <img src="/static/hotty.jpeg" alt="Shop Hero Watch" class="shop-hero-shoe">
         </div>
-        <div class="hot-deals">
-            <h2>Hot Deals</h2>
+
+        <!-- Featured Products Section -->
+        <div class="featured-products">
+            <h2>Featured Products</h2>
             <div class="product-grid">
                 {% for category, items in products.items() %}
                     {% for item in items %}
                         <div class="product-card">
                             <img src="{{ item.image }}" alt="{{ item.name }}">
                             <h3>{{ item.name }}</h3>
-                            <p>{{ item.description }}</p>
                             <p class="price">₦ {{ item.price }}</p>
                             <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                         </div>
                     {% endfor %}
                 {% endfor %}
             </div>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section id="shop" class="section" style="display: none;">
+        <div class="shop-hero">
+            <h1>Shop Contour</h1>
+            <p>Explore our full collection of men's fashion.</p>
+        </div>
+        <div class="product-grid">
+            {% for category, items in products.items() %}
+                {% for item in items %}
+                    <div class="product-card">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                        <h3>{{ item.name }}</h3>
+                        <p>{{ item.description }}</p>
+                        <p class="price">₦ {{ item.price }}</p>
+                        <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
         </div>
     </section>
 
@@ -111,6 +117,18 @@
         <p>Your payment was canceled. Feel free to try again or contact support.</p>
         <a href="#shop" onclick="showSection('shop')">Back to Shop</a>
     </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#home" onclick="showSection('home')">Home</a>
+                <a href="#shop" onclick="showSection('shop')">Shop</a>
+                <a href="#contact" onclick="showSection('contact')">Contact</a>
+            </div>
+            <p>&copy; 2025 Contour. All rights reserved.</p>
+        </div>
+    </footer>
 
     <!-- JavaScript for Navigation and Menu Toggle -->
     <script>
