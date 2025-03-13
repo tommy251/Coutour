@@ -2,10 +2,9 @@ from flask import Flask, jsonify, render_template, send_from_directory, request,
 import logging
 import stripe
 import os
-
-# Configure Stripe using environment variables
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")  # Fallback for local testing
-stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")  # Fallback for local testing
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,9 +13,14 @@ logger = logging.getLogger(__name__)
 # Initialize Flask app
 app = Flask(__name__)
 
-# Configure Stripe (replace with your Stripe keys)
-stripe.api_key = "your_stripe_secret_key"  # Replace with your Stripe secret key
-stripe_public_key = "your_stripe_public_key"  # Replace with your Stripe public key
+# Configure Stripe using environment variables
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")
+stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")
+
+# Email configuration (Gmail SMTP)
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "your-email@gmail.com")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "your-app-password")
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "your-email@gmail.com")  # Your email to receive messages
 
 # Manual product catalog
 products = {
@@ -24,11 +28,8 @@ products = {
         {"id": 1, "name": "Basic T-Shirt", "price": 1999.00, "image": "/static/images/tshirt.jpg", "description": "Comfortable cotton t-shirt, available in multiple colors."},
         {"id": 2, "name": "Workout Leggings", "price": 4999.00, "image": "/static/images/leggings.jpg", "description": "Stretchable leggings for gym or casual wear."}
     ],
-    "shoes": [
-        {"id": 3, "name": "Running Shoes", "price": 7999.00, "image": "/static/images/runningshoes.jpg", "description": "Lightweight shoes for running and training."}
-    ],
     "wristwatches": [
-        {"id": 4, "name": "Classic Watch", "price": 3999.00, "image": "/static/images/watch.jpg", "description": "Stylish analog watch with leather strap."}
+        {"id": 3, "name": "Classic Watch", "price": 3999.00, "image": "/static/images/watch.jpg", "description": "Stylish analog watch with leather strap."}
     ]
 }
 
@@ -80,6 +81,36 @@ def pay(product_id):
     except Exception as e:
         logger.error(f"Failed to create Stripe session: {e}")
         return jsonify({"error": str(e)}), 500
+
+# Contact form route
+@app.route("/contact", methods=["POST"])
+def contact():
+    try:
+        # Get form data
+        name = request.form["name"]
+        email = request.form["email"]
+        message = request.form["message"]
+
+        # Create email content
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = RECIPIENT_EMAIL
+        msg["Subject"] = f"New Contact Form Submission from {name}"
+        body = f"Name: {name}\nEmail: {email}\nMessage: {message}"
+        msg.attach(MIMEText(body, "plain"))
+
+        # Send email via Gmail SMTP
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_ADDRESS, RECIPIENT_EMAIL, msg.as_string())
+
+        logger.debug("Email sent successfully")
+        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, message_sent=True)
+
+    except Exception as e:
+        logger.error(f"Failed to send email: {e}")
+        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, message_sent=False, error=str(e))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

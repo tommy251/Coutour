@@ -12,3 +12,9 @@ services:
         sync: false
       - key: STRIPE_PUBLIC_KEY
         sync: false
+      - key: EMAIL_ADDRESS
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: RECIPIENT_EMAIL
+        sync: false

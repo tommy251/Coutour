@@ -22,7 +22,7 @@
         <div class="home-hero">
             <h1>THE PURE COMFORT IS HERE.</h1>
             <h2>Deept.</h2>
-            <img src="/static/images/hero-shoe.jpg" alt="Hero Shoe" class="hero-shoe">
+            <img src="/static/images/hommy.jpeg" alt="Hero Shoe" class="hero-shoe">
             <div class="color-options">
                 <span class="color-dot" style="background-color: white;"></span>
                 <span class="color-dot" style="background-color: gray;"></span>
@@ -36,55 +36,59 @@
     </section>
 
     <!-- Shop Section (Nike-Inspired Design) -->
-    <section id="shop" class="section" style="display: none;">
-        <div class="shop-hero">
-            <h1>MAY YOUR JOURNEY BE WITH US</h1>
-            <p>A shoe is an item of footwear intended to protect and comfort the human foot. They are often worn with a sock.</p>
-            <div class="shop-hero-details">
-                <div class="detail-box">
-                    <h3>Comfort</h3>
-                    <p>The insoles are very comfortable Peaceful.</p>
-                </div>
-                <div class="detail-box">
-                    <h3>Style</h3>
-                    <p>Nike shoes have their hundreds of styles.</p>
-                </div>
-                <div class="detail-box">
-                    <h3>Why Choose Us</h3>
-                    <p>Nike shoes have their hundreds of styles Most shoes have low prices The insoles are comfortable so you can wear them everyday</p>
-                </div>
+<section id="shop" class="section" style="display: none;">
+    <div class="shop-hero">
+        <h1>ELEVATE YOUR STYLE WITH CONTOUR</h1>
+        <p>Discover the best in men's fashion with our curated collection of clothes and wristwatches, designed for style and comfort.</p>
+        <div class="shop-hero-details">
+            <div class="detail-box">
+                <h3>Comfort</h3>
+                <p>Our clothes are crafted with premium fabrics for all-day comfort.</p>
             </div>
-            <img src="/static/images/shop-hero-shoe.jpg" alt="Shop Hero Shoe" class="shop-hero-shoe">
+            <div class="detail-box">
+                <h3>Style</h3>
+                <p>Timeless wristwatches and trendy apparel to match any look.</p>
+            </div>
+            <div class="detail-box">
+                <h3>Why Choose Us</h3>
+                <p>High-quality men’s fashion at affordable prices, with designs that elevate your wardrobe.</p>
+            </div>
         </div>
-        <div class="hot-deals">
-            <h2>Hot Deals</h2>
-            <div class="product-grid">
-                {% for category, items in products.items() %}
-                    {% for item in items %}
-                        <div class="product-card">
-                            <img src="{{ item.image }}" alt="{{ item.name }}">
-                            <h3>{{ item.name }}</h3>
-                            <p>{{ item.description }}</p>
-                            <p class="price">₦ {{ item.price }}</p>
-                            <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
-                        </div>
-                    {% endfor %}
+        <img src="/static/images/hotty.jpeg" alt="Shop Hero Watch" class="shop-hero-shoe">
+    </div>
+    <div class="hot-deals">
+        <h2>Hot Deals</h2>
+        <div class="product-grid">
+            {% for category, items in products.items() %}
+                {% for item in items %}
+                    <div class="product-card">
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                        <h3>{{ item.name }}</h3>
+                        <p>{{ item.description }}</p>
+                        <p class="price">₦ {{ item.price }}</p>
+                        <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                    </div>
                 {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Contact Section -->
-    <section id="contact" class="section" style="display: none;">
-        <h1>Contact Us</h1>
-        <p>Have any questions? Reach out to us!</p>
-        <form class="contact-form">
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-            <textarea placeholder="Message" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
-    </section>
+    <!-- Contact Section -->
+<section id="contact" class="section" style="display: none;">
+    <h1>Contact Us</h1>
+    <p>Have any questions? Reach out to us!</p>
+    <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <textarea name="message" placeholder="Message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+    {% if message_sent %}
+        <p class="success-message">Thank you! Your message has been sent.</p>
+    {% endif %}
+</section>
 
     <!-- Success Section -->
     <section id="success" class="section" style="display: none;">

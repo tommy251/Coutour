@@ -310,3 +310,9 @@ nav ul li a:hover {
 #success a:hover, #cancel a:hover {
     text-decoration: underline;
 }
+.success-message {
+    color: #28a745;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-align: center;
+}
