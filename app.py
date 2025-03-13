@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, render_template, send_from_directory, request, redirect, url_for
 import logging
 import stripe
+import os
+
+# Configure Stripe using environment variables
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")  # Fallback for local testing
+stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")  # Fallback for local testing
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -29,7 +34,8 @@ products = {
 
 # Serve the index.html file at the root URL
 @app.route("/")
-def serve_index():
+@app.route("/<section>")
+def serve_index(section=None):
     try:
         logger.debug("Attempting to render index.html")
         return render_template("index.html", products=products, stripe_public_key=stripe_public_key)
@@ -66,22 +72,14 @@ def pay(product_id):
                 "quantity": 1,
             }],
             mode="payment",
-            success_url=url_for("success", _external=True),
-            cancel_url=url_for("cancel", _external=True),
+            success_url=url_for("serve_index", section="success", _external=True),
+            cancel_url=url_for("serve_index", section="cancel", _external=True),
             metadata={"product_id": str(product_id), "brand": "Contour"},
         )
         return jsonify({"sessionId": session.id})
     except Exception as e:
         logger.error(f"Failed to create Stripe session: {e}")
         return jsonify({"error": str(e)}), 500
-
-@app.route("/success")
-def success():
-    return render_template("success.html")
-
-@app.route("/cancel")
-def cancel():
-    return render_template("cancel.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

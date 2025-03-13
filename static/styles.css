@@ -7,8 +7,12 @@ body {
 }
 
 nav {
-    background-color: #007bff;
+    background-color: #1a2526;
     padding: 1rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
 }
 
 nav ul {
@@ -27,49 +31,154 @@ nav ul li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 nav ul li a:hover {
-    text-decoration: underline;
+    color: #d4af37;
 }
 
-header {
+/* General Section Styling */
+.section {
+    min-height: 100vh;
+    padding: 4rem 2rem;
+    box-sizing: border-box;
+}
+
+/* Home Section (Adidas-Inspired) */
+#home {
+    background: linear-gradient(135deg, #1a2526 0%, #2e3b3e 100%);
+    color: #d4af37; /* Gold accent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 2rem;
-    background-color: #e9ecef;
 }
 
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: #007bff;
+.home-hero {
+    max-width: 800px;
 }
 
-header p {
-    font-size: 1.2rem;
-    color: #666;
+.home-hero h1 {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0;
 }
 
-.sales-banner {
-    background-color: #dc3545;
+.home-hero h2 {
+    font-size: 6rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0;
+    color: #d4af37;
+}
+
+.home-hero .hero-shoe {
+    max-width: 500px;
+    margin: 1rem 0;
+}
+
+.color-options {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.color-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #d4af37;
+}
+
+.color-name {
+    font-size: 1rem;
+    text-transform: uppercase;
     color: white;
-    padding: 0.5rem;
-    margin-top: 1rem;
-    display: inline-block;
-    border-radius: 5px;
 }
 
-section {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+.reserve-btn, .learn-more-btn {
+    padding: 0.75rem 2rem;
+    margin: 0.5rem;
+    border-radius: 25px;
+    border: 2px solid #d4af37;
+    background: none;
+    color: #d4af37;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-section h2 {
-    font-size: 2rem;
+.reserve-btn:hover, .learn-more-btn:hover {
+    background: #d4af37;
+    color: #1a2526;
+}
+
+/* Shop Section (Nike-Inspired) */
+#shop {
+    background-color: #1c2526;
+    color: white;
+}
+
+.shop-hero {
     text-align: center;
-    margin-bottom: 1.5rem;
-    color: #007bff;
+    padding: 2rem;
+}
+
+.shop-hero h1 {
+    font-size: 4rem;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.shop-hero p {
+    font-size: 1.2rem;
+    color: #ccc;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.shop-hero-details {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.detail-box {
+    background: #2e3b3e;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 200px;
+}
+
+.detail-box h3 {
+    font-size: 1.2rem;
+    color: #ff0000; /* Red accent */
+    margin-bottom: 0.5rem;
+}
+
+.detail-box p {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.shop-hero-shoe {
+    max-width: 400px;
+    margin: 1rem 0;
+}
+
+.hot-deals {
+    padding: 2rem;
+}
+
+.hot-deals h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .product-grid {
@@ -79,12 +188,10 @@ section h2 {
 }
 
 .product-card {
-    border: 1px solid #ddd;
+    background: #2e3b3e;
     border-radius: 8px;
     padding: 1rem;
     text-align: center;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
 }
 
@@ -102,23 +209,23 @@ section h2 {
 .product-card h3 {
     font-size: 1.2rem;
     margin: 0.5rem 0;
-    color: #333;
+    color: white;
 }
 
 .product-card p {
     font-size: 0.9rem;
-    color: #666;
+    color: #ccc;
     margin: 0.3rem 0;
 }
 
 .product-card .price {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #dc3545;
+    color: #ff0000; /* Red accent */
 }
 
 .buy-now {
-    background-color: #28a745;
+    background-color: #ff0000;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -129,10 +236,70 @@ section h2 {
 }
 
 .buy-now:hover {
-    background-color: #218838;
+    background-color: #cc0000;
 }
 
-section a {
+/* Contact Section */
+#contact {
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.contact-form {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-form input, .contact-form textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.contact-form textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.contact-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.contact-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Success and Cancel Sections */
+#success, #cancel {
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+#success h1, #cancel h1 {
+    font-size: 2.5rem;
+    color: #28a745; /* Green for success */
+}
+
+#cancel h1 {
+    color: #dc3545; /* Red for cancel */
+}
+
+#success p, #cancel p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+#success a, #cancel a {
     display: inline-block;
     margin-top: 1rem;
     color: #007bff;
@@ -140,6 +307,6 @@ section a {
     font-weight: bold;
 }
 
-section a:hover {
+#success a:hover, #cancel a:hover {
     text-decoration: underline;
 }
