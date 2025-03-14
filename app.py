@@ -73,7 +73,7 @@ products = {
         {"id": 7, "name": "Classic Watch", "price": 3999.00, "image": "/static/w7.jpg", "description": "Stylish analog watch with leather strap"},
         {"id": 8, "name": "Classic Watch", "price": 3999.00, "image": "/static/w8.jpg", "description": "Stylish analog watch with leather strap"},
         {"id": 9, "name": "Classic Watch", "price": 3999.00, "image": "/static/w9.jpg", "description": "Stylish analog watch with leather strap"},
-        {"id": 10, "name": "Classic Watch", "price": 3999.00, "image": "/static/w10.jpg", "description": "Stylish analog watch with leather strap"}
+        {"id": 10, "name": "Classic Watch", "price": 3990.00, "image": "/static/w10.jpg", "description": "Stylish analog watch with leather strap"}
     ]
 }
 
