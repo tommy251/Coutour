@@ -1,10 +1,6 @@
-// Ensure Stripe is loaded (if using Stripe for international payments)
-const stripe = Stripe(window.stripePublicKey);
-
-// Function to handle product ordering
 async function orderProduct(productId) {
     try {
-        // Step 1: Fetch the checkout session from your server
+        // Step 1: Fetch the payment URL from your server
         const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: {
@@ -13,21 +9,15 @@ async function orderProduct(productId) {
             body: JSON.stringify({ productId: productId }),
         });
 
-        const session = await response.json();
+        const data = await response.json();
 
-        if (session.error) {
-            alert('Error: ' + session.error);
+        if (data.error) {
+            alert('Error: ' + data.error);
             return;
         }
 
-        // Step 2: Redirect to the payment gateway's checkout page
-        const result = await stripe.redirectToCheckout({
-            sessionId: session.id
-        });
-
-        if (result.error) {
-            alert('Payment Error: ' + result.error.message);
-        }
+        // Step 2: Redirect to Paystack's payment page
+        window.location.href = data.payment_url;
     } catch (error) {
         console.error('Error during checkout:', error);
         alert('An error occurred while processing your order. Please try again.');
