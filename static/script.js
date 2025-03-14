@@ -4,7 +4,9 @@ async function orderProduct(productId) {
         const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
         const selectedSize = sizeSelect ? sizeSelect.value : null;
 
-        if (selectedSize === "" && sizeSelect) { // Check if size is required and not selected
+        // This validation should not be necessary since the button is disabled,
+        // but adding as an extra safeguard
+        if (selectedSize === "" && sizeSelect) {
             alert('Please select a size before checking out.');
             return;
         }
@@ -31,4 +33,4 @@ async function orderProduct(productId) {
         console.error('Error during checkout:', error);
         alert('An error occurred while processing your order. Please try again.');
     }
-}
+}sss

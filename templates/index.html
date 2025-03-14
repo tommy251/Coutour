@@ -67,8 +67,10 @@
                                         <option value="{{ size }}">{{ size }}</option>
                                     {% endfor %}
                                 </select>
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})" disabled>Buy Now</button>
+                            {% else %}
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})">Buy Now</button>
                             {% endif %}
-                            <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                         </div>
                     {% endfor %}
                 {% endfor %}
@@ -96,9 +98,11 @@
                                     <option value="{{ size }}">{{ size }}</option>
                                 {% endfor %}
                             </select>
+                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})" disabled>Buy Now</button>
+                        {% else %}
+                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})">Buy Now</button>
                         {% endif %}
                         <p class="price">₦ {{ item.price }}</p>
-                        <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                     </div>
                 {% endfor %}
             {% endfor %}
@@ -159,6 +163,20 @@
         // Show Home section by default
         document.addEventListener('DOMContentLoaded', () => {
             showSection('home');
+
+            // Add event listeners to all size select dropdowns
+            const sizeSelects = document.querySelectorAll('.size-select');
+            sizeSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
+                    if (this.value !== "") {
+                        buyButton.disabled = false; // Enable button if a size is selected
+                    } else {
+                        buyButton.disabled = true; // Disable button if no size is selected
+                    }
+                });
+            });
         });
         // Toggle hamburger menu
         const hamburger = document.querySelector('.hamburger');
