@@ -1,34 +1,35 @@
-// Initialize Stripe with the public key from the global variable
-console.log('Initializing Stripe with public key:', window.stripePublicKey);
+// Ensure Stripe is loaded (if using Stripe for international payments)
 const stripe = Stripe(window.stripePublicKey);
 
+// Function to handle product ordering
 async function orderProduct(productId) {
-    console.log('Ordering product with ID:', productId);
     try {
-        const response = await fetch(`/pay/${productId}`, {
+        // Step 1: Fetch the checkout session from your server
+        const response = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId: productId }),
         });
-        console.log('Fetch response status:', response.status);
-        const data = await response.json();
-        console.log('Fetch response data:', data);
-        
-        if (data.error) {
-            alert(`Error: ${data.error}`);
+
+        const session = await response.json();
+
+        if (session.error) {
+            alert('Error: ' + session.error);
             return;
         }
 
-        // Redirect to Stripe Checkout (supports Mastercard and Verve)
-        stripe.redirectToCheckout({ sessionId: data.sessionId }).then(result => {
-            if (result.error) {
-                alert(`Payment error: ${result.error.message}`);
-                console.error('Stripe error:', result.error);
-            }
+        // Step 2: Redirect to the payment gateway's checkout page
+        const result = await stripe.redirectToCheckout({
+            sessionId: session.id
         });
+
+        if (result.error) {
+            alert('Payment Error: ' + result.error.message);
+        }
     } catch (error) {
-        alert(`Failed to initiate payment: ${error.message}`);
-        console.error("Payment error:", error);
+        console.error('Error during checkout:', error);
+        alert('An error occurred while processing your order. Please try again.');
     }
 }
