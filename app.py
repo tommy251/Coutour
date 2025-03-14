@@ -19,13 +19,13 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")
 stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")
 
 # Configure Paystack using environment variables
-PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "sk_test_your_paystack_secret_key")
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "sk_live_52b3b00eeaf50cd6f7f14e3de30202d157b97b51")
 paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
 
 # Email configuration (Gmail SMTP)
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "your-email@gmail.com")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "your-app-password")
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "your-email@gmail.com")  # Your email to receive messages
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "tommybab7@gmail.com")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "pcro jnzp lygk jlgk")
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "tommybab7@gmail.com")  # Your email to receive messages
 
 # Manual product catalog
 products = {
