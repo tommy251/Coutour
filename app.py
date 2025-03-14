@@ -19,13 +19,13 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")
 stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")
 
 # Configure Paystack using environment variables
-PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")  # No default value
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")  # Added empty default for safety
 paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
 
 # Email configuration (Gmail SMTP)
-EMAIL_ADDRESS = os.getenv("tommybab7@gmail.com")
-EMAIL_PASSWORD = os.getenv("clys xyjz fhag sumu")  # No default value
-RECIPIENT_EMAIL = os.getenv("tommybab7@gmail.com")  # Your email to receive messages
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "tommybab7@gmail.com")  # Fixed to use key with default value
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")  # Removed hardcoded password, added empty default
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "tommybab7@gmail.com")  # Fixed to use key with default value
 
 # Manual product catalog
 products = {
@@ -59,7 +59,7 @@ products = {
         {"id": 15, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s15.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"},
         {"id": 16, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s16.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"},
         {"id": 17, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s17.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"},
-        {"id": 18, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s18.jpg", "Size": "EU 40,
+        {"id": 18, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s18.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"},  # Fixed: Completed the Size string
         {"id": 19, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s19.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"},
         {"id": 20, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s20.jpg", "Size": "EU 40, EU 41, EU 42, EU 43, EU 44, EU 45"}
     ],
