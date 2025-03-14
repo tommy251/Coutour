@@ -413,3 +413,23 @@ footer p {
     font-size: 0.9rem;
     color: #ccc;
 }
+/* ... (existing CSS remains unchanged) ... */
+
+/* Style for the size select dropdown */
+.size-select {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #fff;
+}
+
+.size-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* ... (rest of the existing CSS remains unchanged) ... */

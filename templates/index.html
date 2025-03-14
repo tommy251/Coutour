@@ -60,6 +60,14 @@
                             <img src="{{ item.image }}" alt="{{ item.name }}">
                             <h3>{{ item.name }}</h3>
                             <p class="price">₦ {{ item.price }}</p>
+                            {% if item.sizes %}
+                                <select class="size-select" data-product-id="{{ item.id }}">
+                                    <option value="">Select Size</option>
+                                    {% for size in item.sizes %}
+                                        <option value="{{ size }}">{{ size }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
                             <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                         </div>
                     {% endfor %}
@@ -80,7 +88,15 @@
                     <div class="product-card">
                         <img src="{{ item.image }}" alt="{{ item.name }}">
                         <h3>{{ item.name }}</h3>
-                        <p>{{ item.description }}</p>
+                        <p>{{ item.description if not item.sizes else "Available Sizes:" }}</p>
+                        {% if item.sizes %}
+                            <select class="size-select" data-product-id="{{ item.id }}">
+                                <option value="">Select Size</option>
+                                {% for size in item.sizes %}
+                                    <option value="{{ size }}">{{ size }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
                         <p class="price">₦ {{ item.price }}</p>
                         <button class="buy-now" onclick="orderProduct({{ item.id }})">Buy Now</button>
                     </div>
@@ -126,7 +142,7 @@
                 <a href="#shop" onclick="showSection('shop')">Shop</a>
                 <a href="#contact" onclick="showSection('contact')">Contact</a>
             </div>
-            <p>&copy; 2025 Contour. All rights reserved.</p>
+            <p>© 2025 Contour. All rights reserved.</p>
         </div>
     </footer>
 
