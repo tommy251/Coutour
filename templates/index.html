@@ -68,9 +68,9 @@
                                         <option value="{{ size }}">{{ size }}</option>
                                     {% endfor %}
                                 </select>
-                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})" disabled>Buy Now</button>
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
                             {% else %}
-                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -99,15 +99,33 @@
                                     <option value="{{ size }}">{{ size }}</option>
                                 {% endfor %}
                             </select>
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})" disabled>Buy Now</button>
+                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
                         {% else %}
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="orderProduct({{ item.id }})">Buy Now</button>
+                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
                         {% endif %}
                         <p class="price">₦ {{ item.price }}</p>
                     </div>
                 {% endfor %}
             {% endfor %}
         </div>
+    </section>
+
+    <!-- Address Input Section -->
+    <section id="address" class="section" style="display: none;">
+        <h1>Delivery Information</h1>
+        <p>Please provide your delivery address and contact details.</p>
+        <form id="address-form" class="address-form" action="{{ url_for('submit_address') }}" method="POST">
+            <input type="hidden" id="product-id" name="product_id">
+            <input type="hidden" id="selected-size" name="size">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="text" name="address_line1" placeholder="Address Line 1" required>
+            <input type="text" name="address_line2" placeholder="Address Line 2 (Optional)">
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="state" placeholder="State" required>
+            <input type="text" name="postal_code" placeholder="Postal Code" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+            <button type="submit">Submit Address</button>
+        </form>
     </section>
 
     <!-- Contact Section -->
@@ -161,6 +179,50 @@
             });
             document.getElementById(sectionId).style.display = 'block';
         }
+
+        // Show address form and pass product ID
+        function showAddressForm(productId) {
+            const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
+            const selectedSize = sizeSelect ? sizeSelect.value : null;
+
+            if (sizeSelect && selectedSize === "") {
+                alert('Please select a size before proceeding.');
+                return;
+            }
+
+            // Store product ID and size in the form
+            document.getElementById('product-id').value = productId;
+            document.getElementById('selected-size').value = selectedSize || '';
+
+            showSection('address');
+        }
+
+        // Handle address form submission
+        document.getElementById('address-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/submit_address', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                // Redirect to payment URL
+                window.location.href = data.payment_url;
+            } catch (error) {
+                console.error('Error during address submission:', error);
+                alert('An error occurred while processing your address. Please try again.');
+            }
+        });
+
         // Show Home section by default
         document.addEventListener('DOMContentLoaded', () => {
             showSection('home');
@@ -172,13 +234,14 @@
                     const productId = this.getAttribute('data-product-id');
                     const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
                     if (this.value !== "") {
-                        buyButton.disabled = false; // Enable button if a size is selected
+                        buyButton.disabled = false;
                     } else {
-                        buyButton.disabled = true; // Disable button if no size is selected
+                        buyButton.disabled = true;
                     }
                 });
             });
         });
+
         // Toggle hamburger menu
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, send_from_directory, request, redirect, url_for
+from flask import Flask, jsonify, render_template, send_from_directory, request, redirect, url_for, session
 from paystackapi.transaction import Transaction
 import logging
 import stripe
@@ -13,19 +13,20 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_secret_key")  # Add a secret key for session management
 
 # Configure Stripe using environment variables
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")
 stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")
 
 # Configure Paystack using environment variables
-PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")  # Added empty default for safety
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")
 paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
 
 # Email configuration (Gmail SMTP)
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "tommybab7@gmail.com")  # Fixed to use key with default value
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")  # Removed hardcoded password, added empty default
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "tommybab7@gmail.com")  # Fixed to use key with default value
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "tommybab7@gmail.com")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "tommybab7@gmail.com")
 
 # Manual product catalog with sizes as a list
 products = {
@@ -35,7 +36,7 @@ products = {
         {"id": 3, "name": "Trendy Blue Up And Down Wears Pk2", "price": 20000.00, "image": "/static/c3.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 4, "name": "4 IN 1 UNISEX COLLAR N PLAIN ROUND NECK T-SHIRT POLO SHIRT FOR MEN", "price": 25000.00, "image": "/static/c4.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 5, "name": "Men`s 3 In 1 Sleeveless Hoodie T-Shirts For Gym & Sport - Multi", "price": 20000.00, "image": "/static/c5.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
-        {"id": 6, "name": "Classic Watch", "price": 3999.00, "image": "/static/c6.jpg", "sizes": []},  # No sizes for watches
+        {"id": 6, "name": "Classic Watch", "price": 3999.00, "image": "/static/c6.jpg", "sizes": []},
         {"id": 7, "name": "Classic Watch", "price": 3999.00, "image": "/static/c7.jpg", "sizes": []},
         {"id": 8, "name": "Classic Watch", "price": 3999.00, "image": "/static/c8.jpg", "sizes": []},
         {"id": 9, "name": "Classic Watch", "price": 3999.00, "image": "/static/c9.jpg", "sizes": []},
@@ -106,9 +107,8 @@ def pay(product_id):
         if not product:
             return jsonify({"error": "Product not found"}), 404
         
-        # Get the selected size from the request
         selected_size = request.form.get("size")
-        if not selected_size and product.get("sizes"):  # Check if sizes exist and none selected
+        if not selected_size and product.get("sizes"):
             return jsonify({"error": "Please select a size"}), 400
 
         session = stripe.checkout.Session.create(
@@ -138,7 +138,6 @@ def create_checkout_session():
     product_id = data.get('productId')
     selected_size = data.get('size')
 
-    # Find the product
     product = None
     for category, items in products.items():
         for item in items:
@@ -151,17 +150,16 @@ def create_checkout_session():
     if not product:
         return jsonify({'error': 'Product not found'}), 404
 
-    if not selected_size and product.get("sizes"):  # Check if sizes exist and none selected
+    if not selected_size and product.get("sizes"):
         return jsonify({'error': 'Please select a size'}), 400
 
     try:
-        # Initialize a Paystack transaction
         response = paystack_transaction.initialize(
-            amount=int(product['price'] * 100),  # Paystack expects amount in kobo (multiply by 100)
-            email='customer@example.com',  # Replace with customer's email (you can collect this from a form)
-            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',  # Unique transaction reference
-            callback_url='https://coutour.onrender.com/verify-payment',  # URL to redirect after payment
-            metadata={"size": selected_size or ""}  # Pass size to Paystack metadata
+            amount=int(product['price'] * 100),
+            email='customer@example.com',
+            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
+            callback_url='https://coutour.onrender.com/verify-payment',
+            metadata={"size": selected_size or ""}
         )
 
         if response['status']:
@@ -180,28 +178,87 @@ def verify_payment():
         return redirect(url_for('serve_index', section='cancel'))
 
     try:
-        # Verify the transaction with Paystack
         response = paystack_transaction.verify(reference=reference)
         if response['status'] and response['data']['status'] == 'success':
-            # Payment successful, redirect to success page
             return redirect(url_for('serve_index', section='success'))
         else:
-            # Payment failed, redirect to cancel page
             return redirect(url_for('serve_index', section='cancel'))
 
     except Exception as e:
         return redirect(url_for('serve_index', section='cancel'))
 
+# New Route for Address Submission
+@app.route('/submit_address', methods=['POST'])
+def submit_address():
+    product_id = request.form.get('product_id')
+    selected_size = request.form.get('size')
+    full_name = request.form.get('full_name')
+    address_line1 = request.form.get('address_line1')
+    address_line2 = request.form.get('address_line2')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    postal_code = request.form.get('postal_code')
+    phone = request.form.get('phone')
+
+    # Basic validation
+    if not all([product_id, full_name, address_line1, city, state, postal_code, phone]):
+        return jsonify({'error': 'All required fields must be filled'}), 400
+
+    if not selected_size and any(item['sizes'] for category in products.values() for item in category if item['id'] == int(product_id)):
+        return jsonify({'error': 'Please select a size'}), 400
+
+    product = next((item for category in products.values() for item in category if item['id'] == int(product_id)), None)
+    if not product:
+        return jsonify({'error': 'Product not found'}), 404
+
+    try:
+        # Store address details in session (optional, for later use)
+        session['order_details'] = {
+            'product_id': product_id,
+            'size': selected_size,
+            'full_name': full_name,
+            'address_line1': address_line1,
+            'address_line2': address_line2,
+            'city': city,
+            'state': state,
+            'postal_code': postal_code,
+            'phone': phone
+        }
+
+        # Initialize Paystack transaction with address metadata
+        response = paystack_transaction.initialize(
+            amount=int(product['price'] * 100),
+            email='customer@example.com',  # Replace with dynamic email if collected
+            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
+            callback_url='https://coutour.onrender.com/verify-payment',
+            metadata={
+                "size": selected_size or "",
+                "full_name": full_name,
+                "address_line1": address_line1,
+                "address_line2": address_line2 or "",
+                "city": city,
+                "state": state,
+                "postal_code": postal_code,
+                "phone": phone
+            }
+        )
+
+        if response['status']:
+            return jsonify({'payment_url': response['data']['authorization_url']})
+        else:
+            return jsonify({'error': 'Failed to initialize payment'}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Contact form route
 @app.route("/contact", methods=["POST"])
 def contact():
     try:
-        # Get form data
         name = request.form["name"]
         email = request.form["email"]
         message = request.form["message"]
 
-        # Create email content
         msg = MIMEMultipart()
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = RECIPIENT_EMAIL
@@ -209,7 +266,6 @@ def contact():
         body = f"Name: {name}\nEmail: {email}\nMessage: {message}"
         msg.attach(MIMEText(body, "plain"))
 
-        # Send email via Gmail SMTP
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
