@@ -20,16 +20,14 @@ nav {
 }
 
 .logo h3.logo-text {
-    color: #D4A017; /* Bronze color */
+    color: #FFFFFF; /* White text */
     margin: 0 0 0 1rem;
-    font-size: 1.5rem;
-    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem; /* Slightly bigger logo text */
+    font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    background: linear-gradient(90deg, #D4A017, #FFD700);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hamburger {
@@ -137,32 +135,33 @@ nav {
 }
 
 .contour-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 5rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 7rem; /* Bigger text as requested */
     font-weight: 700;
     text-transform: uppercase;
-    background: linear-gradient(90deg, #D4A017, #FFD700);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    color: #FFFFFF; /* White text */
+    letter-spacing: 5px; /* Wider spacing for futuristic feel */
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7); /* Enhanced shadow for depth */
     position: relative;
-    /* Add a unique swoosh effect */
-    padding-bottom: 0.5rem;
+    /* Custom contour-inspired styling */
+    line-height: 1;
+}
+
+.contour-title span {
+    display: inline-block;
+    transform: skewY(-5deg); /* Slight angle for uniqueness */
 }
 
 .contour-title::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 10%;
-    width: 80%;
-    height: 5px;
-    background: linear-gradient(90deg, #D4A017, #FFD700);
-    border-radius: 2px;
-    opacity: 0.7;
-    /* Slight curve for uniqueness */
-    transform: skewX(-10deg);
+    bottom: -10px;
+    left: 5%;
+    width: 90%;
+    height: 8px;
+    background: linear-gradient(to right, transparent, #FFFFFF33, transparent); /* Faint contour line */
+    border-radius: 4px;
+    opacity: 0.3;
 }
 
 .hero-content {
@@ -467,13 +466,8 @@ footer p {
     font-size: 0.9rem;
     color: #ccc;
 }
-.hero-section::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, transparent 50%, rgba(26, 37, 38, 0.8) 100%);
-    z-index: 1;
+@media (max-width: 768px) {
+    .contour-title {
+        font-size: 4rem;
+    }
 }
