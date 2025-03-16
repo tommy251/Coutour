@@ -19,10 +19,17 @@ nav {
     align-items: center;
 }
 
-.logo h3 {
-    color: white;
+.logo h3.logo-text {
+    color: #D4A017; /* Bronze color */
     margin: 0 0 0 1rem;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    background: linear-gradient(90deg, #D4A017, #FFD700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hamburger {
@@ -109,11 +116,10 @@ nav {
 .hero-section {
     position: relative;
     width: 100%;
-    min-height: 80vh; /* Minimum height to ensure content fits */
+    min-height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Add a gradient overlay to blend the image edges */
     background: linear-gradient(to bottom, rgba(26, 37, 38, 0.6), rgba(46, 59, 62, 0.6));
 }
 
@@ -123,11 +129,40 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensure the full image is visible */
+    object-fit: contain;
     z-index: 1;
-    opacity: 0.7; /* Reduce opacity to blend with the background */
-    filter: brightness(0.8); /* Slightly darken the image to match the dark theme */
-    mix-blend-mode: multiply; /* Blend the image with the gradient */
+    opacity: 0.7;
+    filter: brightness(0.8);
+    mix-blend-mode: multiply;
+}
+
+.contour-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #D4A017, #FFD700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    position: relative;
+    /* Add a unique swoosh effect */
+    padding-bottom: 0.5rem;
+}
+
+.contour-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 5px;
+    background: linear-gradient(90deg, #D4A017, #FFD700);
+    border-radius: 2px;
+    opacity: 0.7;
+    /* Slight curve for uniqueness */
+    transform: skewX(-10deg);
 }
 
 .hero-content {
@@ -135,14 +170,6 @@ nav {
     z-index: 2;
     text-align: center;
     padding: 2rem;
-}
-
-.hero-content h1 {
-    font-size: 5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: white;
-    margin-bottom: 2rem;
 }
 
 .shop-now-btn {
@@ -256,7 +283,7 @@ nav {
 .product-card .price {
     font-size: 1.1rem;
     font-weight: bold;
-    color: #ff0000; /* Red accent */
+    color: #ff0000;
 }
 
 .buy-now {
@@ -376,11 +403,11 @@ nav {
 
 #success h1, #cancel h1 {
     font-size: 2.5rem;
-    color: #28a745; /* Green for success */
+    color: #28a745;
 }
 
 #cancel h1 {
-    color: #dc3545; /* Red for cancel */
+    color: #dc3545;
 }
 
 #success p, #cancel p {
