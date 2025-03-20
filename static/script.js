@@ -121,20 +121,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial update
     updateCarousel();
 
-    // Add event listeners to all option select dropdowns
-    const optionSelects = document.querySelectorAll('.option-select');
-    optionSelects.forEach(select => {
-        const productId = select.getAttribute('data-product-id');
-        const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
+    // Add event listeners to all product cards
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        const optionSelect = card.querySelector('.option-select');
+        const buyButton = card.querySelector('.buy-now');
 
-        if (buyButton) {
-            if (select.options.length > 1) {
+        if (optionSelect && buyButton) {
+            const productId = optionSelect.getAttribute('data-product-id');
+            console.log(`Setting up product ${productId}`);
+
+            // Initially disable the button if there are options to select
+            if (optionSelect.options.length > 1) {
                 buyButton.disabled = true;
+                console.log(`Buy Now button initially disabled for product ${productId}`);
             } else {
                 buyButton.disabled = false;
+                console.log(`Buy Now button initially enabled for product ${productId} (no options)`);
             }
 
-            select.addEventListener('change', function() {
+            // Add change event listener to the dropdown
+            optionSelect.addEventListener('change', function() {
                 console.log(`Dropdown changed for product ${productId}: Selected value = ${this.value}`);
                 const existingError = this.parentElement.querySelector('.error-message');
                 if (existingError) {
@@ -143,25 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 buyButton.disabled = this.value === "";
                 if (!buyButton.disabled) {
                     console.log(`Buy Now button enabled for product ${productId}`);
+                } else {
+                    console.log(`Buy Now button remains disabled for product ${productId}`);
                 }
             });
+        } else if (buyButton) {
+            // If there's no dropdown, ensure the button is enabled
+            buyButton.disabled = false;
+            const productId = buyButton.getAttribute('data-product-id');
+            console.log(`Buy Now button enabled for product ${productId} (no dropdown)`);
         } else {
-            console.error(`Buy Now button not found for product ${productId}`);
-        }
-    });
-
-    // Ensure buttons for products without options are clickable
-    const buyButtons = document.querySelectorAll('.buy-now');
-    buyButtons.forEach(button => {
-        const productId = button.getAttribute('data-product-id');
-        const optionSelect = document.querySelector(`.option-select[data-product-id="${productId}"]`);
-        if (!optionSelect || optionSelect.options.length <= 1) {
-            button.disabled = false;
-            console.log(`Buy Now button enabled for product ${productId} (no options)`);
-        }
-        // Fallback: Ensure the button is enabled if it has no option dropdown
-        if (!optionSelect) {
-            button.removeAttribute('disabled');
+            console.error(`Buy Now button not found in product card`);
         }
     });
 
