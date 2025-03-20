@@ -8,9 +8,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      - key: STRIPE_SECRET_KEY
+      - key: FLASK_SECRET_KEY
         sync: false
-      - key: STRIPE_PUBLIC_KEY
+      - key: PAYSTACK_SECRET_KEY
         sync: false
       - key: EMAIL_ADDRESS
         sync: false
@@ -18,3 +18,7 @@ services:
         sync: false
       - key: RECIPIENT_EMAIL
         sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: FLASK_ENV
+        value: production

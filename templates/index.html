@@ -6,7 +6,6 @@
     <title>Contour - Affordable Fashion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <!-- Navigation Bar with Hamburger Menu -->
@@ -118,6 +117,7 @@
             <input type="hidden" id="product-id" name="product_id">
             <input type="hidden" id="selected-size" name="size">
             <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
             <input type="text" name="address_line1" placeholder="Address Line 1" required>
             <input type="text" name="address_line2" placeholder="Address Line 2 (Optional)">
             <input type="text" name="city" placeholder="City" required>
@@ -141,6 +141,9 @@
         {% if message_sent %}
             <p class="success-message">Thank you! Your message has been sent.</p>
         {% endif %}
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
     </section>
 
     <!-- Success Section -->
@@ -155,24 +158,6 @@
         <h1>Payment Canceled</h1>
         <p>Your payment was canceled. Feel free to try again or contact support.</p>
         <a href="#shop" onclick="showSection('shop')">Back to Shop</a>
-    </section>
-    
-    <section id="address" class="section" style="display: none;">
-        <h1>Delivery Information</h1>
-        <p>Please provide your delivery address and contact details.</p>
-        <form id="address-form" class="address-form" action="{{ url_for('submit_address') }}" method="POST">
-            <input type="hidden" id="product-id" name="product_id">
-            <input type="hidden" id="selected-size" name="size">
-            <input type="text" name="full_name" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="address_line1" placeholder="Address Line 1" required>
-            <input type="text" name="address_line2" placeholder="Address Line 2 (Optional)">
-            <input type="text" name="city" placeholder="City" required>
-            <input type="text" name="state" placeholder="State" required>
-            <input type="text" name="postal_code" placeholder="Postal Code" required>
-            <input type="tel" name="phone" placeholder="Phone Number" required>
-            <button type="submit">Submit Address</button>
-        </form>
     </section>
 
     <!-- Footer -->
@@ -189,7 +174,6 @@
 
     <!-- JavaScript for Navigation and Menu Toggle -->
     <script>
-        window.stripePublicKey = '{{ stripe_public_key }}';
         function showSection(sectionId) {
             const sections = document.querySelectorAll('.section');
             sections.forEach(section => {
@@ -234,7 +218,7 @@
                     return;
                 }
 
-                // Redirect to payment URL
+                // Redirect to Paystack payment URL
                 window.location.href = data.payment_url;
             } catch (error) {
                 console.error('Error during address submission:', error);

@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, render_template, send_from_directory, request, redirect, url_for, session
 from paystackapi.transaction import Transaction
 import logging
-import stripe
 import os
 import smtplib
 from email.mime.text import MIMEText
@@ -17,12 +16,6 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 if not app.secret_key:
     raise ValueError("FLASK_SECRET_KEY must be set in environment variables")
-
-# Configure Stripe using environment variables
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY")
-if not stripe.api_key or not stripe_public_key:
-    raise ValueError("Stripe API keys must be set in environment variables")
 
 # Configure Paystack using environment variables
 PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
@@ -93,7 +86,7 @@ products = {
 def serve_index(section=None):
     try:
         logger.debug("Attempting to render index.html")
-        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, show_section=section)
+        return render_template("index.html", products=products, show_section=section)
     except Exception as e:
         logger.error(f"Failed to render index.html: {e}")
         return "Error rendering template", 500
@@ -107,40 +100,6 @@ def serve_static(path):
     except Exception as e:
         logger.error(f"Failed to serve static file {path}: {e}")
         return "Error serving static file", 500
-
-# Stripe Payment Route
-@app.route("/pay/<int:product_id>", methods=["POST"])
-def pay(product_id):
-    try:
-        product = next((item for category in products.values() for item in category if item["id"] == product_id), None)
-        if not product:
-            return jsonify({"error": "Product not found"}), 404
-        
-        selected_size = request.form.get("size")
-        if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
-            return jsonify({"error": "Please select a size"}), 400
-
-        email = request.form.get("email", "customer@example.com")  # Collect email from form
-        session = stripe.checkout.Session.create(
-            customer_email=email,
-            payment_method_types=["card"],
-            line_items=[{
-                "price_data": {
-                    "currency": "ngn",
-                    "product_data": {"name": product["name"], "description": f"Size: {selected_size}" if selected_size else product.get("description", "")},
-                    "unit_amount": int(product["price"] * 100),
-                },
-                "quantity": 1,
-            }],
-            mode="payment",
-            success_url=url_for("serve_index", section="success", _external=True),
-            cancel_url=url_for("serve_index", section="cancel", _external=True),
-            metadata={"product_id": str(product_id), "size": selected_size or "", "brand": "Contour"},
-        )
-        return jsonify({"sessionId": session.id})
-    except Exception as e:
-        logger.error(f"Failed to create Stripe session: {e}")
-        return jsonify({"error": str(e)}), 500
 
 # Paystack Payment Route - Create Checkout Session
 @app.route('/create-checkout-session', methods=['POST'])
@@ -286,11 +245,11 @@ def contact():
             server.sendmail(EMAIL_ADDRESS, RECIPIENT_EMAIL, msg.as_string())
 
         logger.debug("Email sent successfully")
-        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, show_section='contact', message_sent=True)
+        return render_template("index.html", products=products, show_section='contact', message_sent=True)
 
     except Exception as e:
         logger.error(f"Failed to send email: {e}")
-        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, show_section='contact', message_sent=False, error="Failed to send email. Please try again later.")
+        return render_template("index.html", products=products, show_section='contact', message_sent=False, error="Failed to send email. Please try again later.")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=os.getenv("FLASK_ENV") == "development")
