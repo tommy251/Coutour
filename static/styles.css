@@ -8,6 +8,7 @@ body {
 
 /* Navigation Bar with Hamburger Menu */
 /* Navigation Bar with Hamburger Menu */
+/* Navigation Bar */
 nav {
     background-color: #1a2526;
     padding: 1rem;
@@ -18,6 +19,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow like Zoho */
 }
 
 .logo h3.logo-text {
@@ -59,35 +61,38 @@ nav {
 }
 
 .nav-links {
-    display: flex; /* Visible by default on larger screens */
-    position: static;
+    display: flex; /* Display links in a single line on desktop */
+    position: static; /* No absolute positioning on desktop */
     background-color: transparent;
     width: auto;
     height: auto;
-    transform: none;
-    transition: none;
-    flex-direction: row;
+    transform: none; /* No transform on desktop */
+    transition: none; /* No transition on desktop */
+    flex-direction: row; /* Horizontal layout */
     align-items: center;
+    margin-right: 1rem; /* Space from the right edge */
 }
 
 .nav-links.active {
-    transform: none; /* No transform needed on larger screens */
+    transform: none; /* No transform needed on desktop */
 }
 
 .nav-links li {
-    margin: 0 1rem;
+    margin: 0 1.5rem; /* Space between links */
     list-style: none;
 }
 
 .nav-links li a {
     color: white;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 500; /* Slightly lighter than bold for a modern look */
     text-transform: uppercase;
+    font-size: 1rem;
+    transition: color 0.3s ease; /* Smooth hover transition */
 }
 
 .nav-links li a:hover {
-    color: #d4af37;
+    color: #d4af37; /* Gold hover effect like Zoho */
 }
 
 /* Media Query for Mobile Devices */
@@ -104,7 +109,7 @@ nav {
         width: 200px;
         height: auto;
         display: flex;
-        flex-direction: column;
+        flex-direction: column; /* Vertical layout on mobile */
         align-items: center;
         transform: translateX(100%);
         transition: transform 0.3s ease-in-out;
@@ -115,7 +120,11 @@ nav {
     }
 
     .nav-links li {
-        margin: 1rem 0;
+        margin: 1rem 0; /* Vertical spacing on mobile */
+    }
+
+    .nav-links li a {
+        font-size: 1.1rem; /* Slightly larger text on mobile */
     }
 }
 
@@ -334,7 +343,8 @@ nav {
 }
 
 /* Style for the size select dropdown */
-.size-select {
+/* Style for the option select dropdown */
+.option-select {
     width: 100%;
     padding: 0.5rem;
     margin: 0.5rem 0;
@@ -344,7 +354,7 @@ nav {
     background-color: #fff;
 }
 
-.size-select:focus {
+.option-select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);

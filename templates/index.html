@@ -102,35 +102,48 @@
     </section>
 
     <!-- Shop Section -->
-    <section id="shop" class="section" style="display: none;">
-        <div class="shop-hero">
-            <h1>Shop Contour</h1>
-            <p>Explore our full collection of men's fashion.</p>
-        </div>
-        <div class="product-grid">
-            {% for category, items in products.items() %}
-                {% for item in items %}
-                    <div class="product-card">
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
-                        <h3>{{ item.name }}</h3>
-                        <p>{{ item.description if not item.sizes or item.sizes|length == 0 else "Available Sizes:" }}</p>
-                        {% if item.sizes and item.sizes|length > 0 %}
-                            <select class="size-select" data-product-id="{{ item.id }}">
-                                <option value="">Select Size</option>
-                                {% for size in item.sizes %}
-                                    <option value="{{ size }}">{{ size }}</option>
-                                {% endfor %}
-                            </select>
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
-                        {% else %}
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
-                        {% endif %}
-                        <p class="price">₦ {{ item.price }}</p>
-                    </div>
-                {% endfor %}
+    <!-- Shop Section -->
+<section id="shop" class="section" style="display: none;">
+    <div class="shop-hero">
+        <h1>Shop Contour</h1>
+        <p>Explore our full collection of men's fashion.</p>
+    </div>
+    <div class="product-grid">
+        {% if item.options %}
+        {% if item.options is mapping %}
+            {% for option_type, values in item.options.items() %}
+                <p>Select {{ option_type|capitalize }}:</p>
+                <select class="option-select" data-product-id="{{ item.id }}" data-option-type="{{ option_type }}">
+                    <option value="">Select {{ option_type|capitalize }}</option>
+                    {% for value in values %}
+                        <option value="{{ value }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
             {% endfor %}
-        </div>
-    </section>
+            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
+        {% else %}
+            <p>
+                {% if category == "wristwatches" %}
+                    Select Color:
+                {% elif category == "Clothes" %}
+                    Select Size:
+                {% elif category == "Shoes" %}
+                    Select Size:
+                {% endif %}
+            </p>
+            <select class="option-select" data-product-id="{{ item.id }}">
+                <option value="">{% if category == "wristwatches" %}Select Color{% else %}Select Size{% endif %}</option>
+                {% for option in item.options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
+        {% endif %}
+    {% else %}
+        <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
+    {% endif %}
+    </div>
+</section>
 
     <!-- Address Input Section -->
     <section id="address" class="section" style="display: none;">
