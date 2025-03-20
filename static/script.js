@@ -1,9 +1,9 @@
 // Show the address form and pass the product ID
 function showAddressForm(productId) {
+    console.log(`showAddressForm called with Product ID: ${productId}`);
     const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
     const selectedSize = sizeSelect ? sizeSelect.value : null;
 
-    // Debug log to confirm whether a size dropdown exists
     console.log(`Product ID: ${productId}, Size Select Element:`, sizeSelect, `Selected Size: ${selectedSize}`);
 
     // Only prompt for size if the product has a size dropdown, has more than one option, and no size is selected
@@ -19,7 +19,7 @@ function showAddressForm(productId) {
         errorDiv.className = 'error-message';
         errorDiv.textContent = 'Please select a size before proceeding.';
         sizeSelect.parentElement.appendChild(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000); // Remove after 3 seconds
+        setTimeout(() => errorDiv.remove(), 3000);
         return;
     }
 
@@ -27,6 +27,7 @@ function showAddressForm(productId) {
     document.getElementById('product-id').value = productId;
     document.getElementById('selected-size').value = selectedSize || '';
 
+    console.log(`Navigating to address section for Product ID: ${productId}`);
     showSection('address');
 }
 
@@ -45,7 +46,6 @@ async function submitOrder(event) {
         const data = await response.json();
 
         if (data.error) {
-            // Display error message in a user-friendly way
             const formError = document.createElement('div');
             formError.className = 'error-message';
             formError.textContent = `Error: ${data.error}`;
@@ -54,7 +54,6 @@ async function submitOrder(event) {
             return;
         }
 
-        // Redirect to Paystack payment URL
         window.location.href = data.payment_url;
     } catch (error) {
         console.error('Error during address submission:', error);
@@ -68,11 +67,17 @@ async function submitOrder(event) {
 
 // Show a specific section and hide others
 function showSection(sectionId) {
+    console.log(`showSection called with sectionId: ${sectionId}`);
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => {
         section.style.display = 'none';
     });
-    document.getElementById(sectionId).style.display = 'block';
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.style.display = 'block';
+    } else {
+        console.error(`Section with ID ${sectionId} not found`);
+    }
 }
 
 // Auto-scrolling carousel logic
@@ -118,21 +123,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const productId = select.getAttribute('data-product-id');
         const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
 
-        // Ensure the button is initially disabled if a size selection is required
-        if (select.options.length > 1) {
-            buyButton.disabled = true;
-        } else {
-            buyButton.disabled = false;
-        }
-
-        select.addEventListener('change', function() {
-            // Remove any existing error messages when a size is selected
-            const existingError = this.parentElement.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
+        if (buyButton) {
+            if (select.options.length > 1) {
+                buyButton.disabled = true;
+                console.log(`Disabled Buy Now button for Product ID: ${productId} (size selection required)`);
+            } else {
+                buyButton.disabled = false;
+                console.log(`Enabled Buy Now button for Product ID: ${productId} (no size selection required)`);
             }
-            buyButton.disabled = this.value === "";
-        });
+
+            select.addEventListener('change', function() {
+                const existingError = this.parentElement.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                buyButton.disabled = this.value === "";
+                console.log(`Buy Now button for Product ID: ${productId} is now ${buyButton.disabled ? 'disabled' : 'enabled'}`);
+            });
+        }
     });
 
     // Ensure buttons for products without sizes are clickable
@@ -142,6 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
         if (!sizeSelect || sizeSelect.options.length <= 1) {
             button.disabled = false;
+            console.log(`Ensured Buy Now button is enabled for Product ID: ${productId} (no size dropdown or single option)`);
+        } else {
+            console.log(`Buy Now button for Product ID: ${productId} remains disabled (size dropdown exists)`);
         }
     });
 
