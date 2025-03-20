@@ -65,19 +65,18 @@ products = {
         {"id": 18, "name": "NEW ARRIVAL SUEDE TIE BLACK SHOE", "price": 17000.00, "image": "/static/s18.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 19, "name": "Gentleman's Casual Frosted Men Leather Shoes - Black", "price": 38990.00, "image": "/static/s19.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 20, "name": "Vangelo NEW VANGELO LUXURY CORPORATE AND WEDDING DESIGNER MEN'S SHOE BROWN", "price": 27500.00, "image": "/static/s20.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
-    ],
-    "wristwatches": [
-        {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
-        {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
-        {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
-        {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
-        {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
-        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
-        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
-        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
-        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
-        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
-    ]
+   "wristwatches": [
+    {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
+    {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
+    {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
+    {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
+    {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
+    {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
+    {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
+    {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
+    {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
+    {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
+]
 }
 
 # Serve the index.html file at the root URL

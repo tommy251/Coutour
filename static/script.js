@@ -3,9 +3,23 @@ function showAddressForm(productId) {
     const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
     const selectedSize = sizeSelect ? sizeSelect.value : null;
 
-    // Only prompt for size if the product has a size dropdown and more than one option, and no size is selected
+    // Debug log to confirm whether a size dropdown exists
+    console.log(`Product ID: ${productId}, Size Select Element:`, sizeSelect, `Selected Size: ${selectedSize}`);
+
+    // Only prompt for size if the product has a size dropdown, has more than one option, and no size is selected
     if (sizeSelect && sizeSelect.options.length > 1 && selectedSize === "") {
-        alert('Please select a size before proceeding.');
+        // Remove any existing error messages
+        const existingError = sizeSelect.parentElement.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+
+        // Create and display an inline error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = 'Please select a size before proceeding.';
+        sizeSelect.parentElement.appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 3000); // Remove after 3 seconds
         return;
     }
 
@@ -31,7 +45,12 @@ async function submitOrder(event) {
         const data = await response.json();
 
         if (data.error) {
-            alert('Error: ' + data.error);
+            // Display error message in a user-friendly way
+            const formError = document.createElement('div');
+            formError.className = 'error-message';
+            formError.textContent = `Error: ${data.error}`;
+            form.appendChild(formError);
+            setTimeout(() => formError.remove(), 3000);
             return;
         }
 
@@ -39,7 +58,11 @@ async function submitOrder(event) {
         window.location.href = data.payment_url;
     } catch (error) {
         console.error('Error during address submission:', error);
-        alert('An error occurred while processing your address. Please try again.');
+        const formError = document.createElement('div');
+        formError.className = 'error-message';
+        formError.textContent = 'An error occurred while processing your address. Please try again.';
+        form.appendChild(formError);
+        setTimeout(() => formError.remove(), 3000);
     }
 }
 
@@ -103,6 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         select.addEventListener('change', function() {
+            // Remove any existing error messages when a size is selected
+            const existingError = this.parentElement.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
             buyButton.disabled = this.value === "";
         });
     });
