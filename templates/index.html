@@ -6,6 +6,41 @@
     <title>Contour - Affordable Fashion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Carousel Styles */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel img {
+            width: 100%;
+            height: auto;
+            flex-shrink: 0;
+        }
+        .carousel-indicators {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .carousel-indicators span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #bbb;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .carousel-indicators .active {
+            background-color: #333;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar with Hamburger Menu -->
@@ -50,30 +85,18 @@
             </div>
         </div>
 
-        <!-- Featured Products Section -->
-        <div class="featured-products">
-            <h2>Featured Products</h2>
-            <div class="product-grid">
+        <!-- Auto-Scrolling Product Image Carousel -->
+        <div class="carousel-container">
+            <h2>Our Products</h2>
+            <div class="carousel" id="product-carousel">
                 {% for category, items in products.items() %}
                     {% for item in items %}
-                        <div class="product-card">
-                            <img src="{{ item.image }}" alt="{{ item.name }}">
-                            <h3>{{ item.name }}</h3>
-                            <p class="price">₦ {{ item.price }}</p>
-                            {% if item.sizes and item.sizes|length > 0 %}
-                                <select class="size-select" data-product-id="{{ item.id }}">
-                                    <option value="">Select Size</option>
-                                    {% for size in item.sizes %}
-                                        <option value="{{ size }}">{{ size }}</option>
-                                    {% endfor %}
-                                </select>
-                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
-                            {% else %}
-                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
-                            {% endif %}
-                        </div>
+                        <img src="{{ item.image }}" alt="{{ item.name }}">
                     {% endfor %}
                 {% endfor %}
+            </div>
+            <div class="carousel-indicators" id="carousel-indicators">
+                <!-- Indicators will be added dynamically via JavaScript -->
             </div>
         </div>
     </section>
@@ -113,7 +136,7 @@
     <section id="address" class="section" style="display: none;">
         <h1>Delivery Information</h1>
         <p>Please provide your delivery address and contact details.</p>
-        <form id="address-form" class="address-form" action="{{ url_for('submit_address') }}" method="POST">
+        <form id="address-form" class="address-form" onsubmit="submitOrder(event)">
             <input type="hidden" id="product-id" name="product_id">
             <input type="hidden" id="selected-size" name="size">
             <input type="text" name="full_name" placeholder="Full Name" required>
@@ -172,105 +195,7 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Navigation and Menu Toggle -->
-    <script>
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById(sectionId).style.display = 'block';
-        }
-
-        // Show address form and pass product ID
-        function showAddressForm(productId) {
-            const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
-            const selectedSize = sizeSelect ? sizeSelect.value : null;
-
-            // Only prompt for size if the product has a size dropdown and no size is selected
-            if (sizeSelect && selectedSize === "") {
-                alert('Please select a size before proceeding.');
-                return;
-            }
-
-            // Store product ID and size in the form
-            document.getElementById('product-id').value = productId;
-            document.getElementById('selected-size').value = selectedSize || '';
-
-            showSection('address');
-        }
-
-        // Handle address form submission
-        document.getElementById('address-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            try {
-                const response = await fetch('/submit_address', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    alert('Error: ' + data.error);
-                    return;
-                }
-
-                // Redirect to Paystack payment URL
-                window.location.href = data.payment_url;
-            } catch (error) {
-                console.error('Error during address submission:', error);
-                alert('An error occurred while processing your address. Please try again.');
-            }
-        });
-
-        // Show Home section by default and set up size selection logic
-        document.addEventListener('DOMContentLoaded', () => {
-            showSection('home');
-
-            // Add event listeners to all size select dropdowns
-            const sizeSelects = document.querySelectorAll('.size-select');
-            sizeSelects.forEach(select => {
-                const productId = select.getAttribute('data-product-id');
-                const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
-
-                // Ensure the button is initially disabled if a size selection is required
-                if (select.options.length > 1) { // Check if there are sizes to select
-                    buyButton.disabled = true;
-                } else {
-                    buyButton.disabled = false;
-                }
-
-                select.addEventListener('change', function() {
-                    if (this.value !== "") {
-                        buyButton.disabled = false;
-                    } else {
-                        buyButton.disabled = true;
-                    }
-                });
-            });
-
-            // Ensure buttons for products without sizes are clickable
-            const buyButtons = document.querySelectorAll('.buy-now');
-            buyButtons.forEach(button => {
-                const productId = button.getAttribute('data-product-id');
-                const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
-                if (!sizeSelect) { // If there's no size select dropdown, the button should be clickable
-                    button.disabled = false;
-                }
-            });
-        });
-
-        // Toggle hamburger menu
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            hamburger.classList.toggle('open');
-        });
-    </script>
+    <!-- Load JavaScript from script.js -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
