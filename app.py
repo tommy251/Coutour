@@ -1,56 +1,17 @@
-from flask import Flask, jsonify, render_template, send_from_directory, request, redirect, url_for, session
-from paystackapi.transaction import Transaction
-import logging
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
+import json
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from paystackapi.transaction import Transaction as PaystackTransaction
+from paystackapi.paystack import Paystack
 
-# Load environment variables from .env file (optional)
-load_dotenv()
-
-# Set up logging
-log_level = os.getenv("LOG_LEVEL", "DEBUG")
-logging.basicConfig(level=getattr(logging, log_level))
-logger = logging.getLogger(__name__)
-
-# Initialize Flask app
 app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your-secret-key')
 
-# Set Flask secret key
-app.secret_key = os.getenv("FLASK_SECRET_KEY")
-if not app.secret_key:
-    if os.getenv("FLASK_ENV", "development") == "development":
-        app.secret_key = "default-secret-key-for-development-only"
-        logger.warning("Using default FLASK_SECRET_KEY for development. Do not use this in production!")
-    else:
-        raise ValueError("FLASK_SECRET_KEY must be set in environment variables")
+# Paystack configuration
+paystack_secret_key = os.getenv('PAYSTACK_SECRET_KEY', 'your-paystack-secret-key')
+paystack = Paystack(secret_key=paystack_secret_key)
+paystack_transaction = PaystackTransaction(paystack)
 
-# Configure Paystack using environment variables
-PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
-if not PAYSTACK_SECRET_KEY:
-    if os.getenv("FLASK_ENV", "development") == "development":
-        PAYSTACK_SECRET_KEY = "default-paystack-key-for-development-only"
-        logger.warning("Using default PAYSTACK_SECRET_KEY for development. Do not use this in production!")
-    else:
-        raise ValueError("PAYSTACK_SECRET_KEY must be set in environment variables")
-paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
-
-# Email configuration (Gmail SMTP)
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
-if not all([EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL]):
-    if os.getenv("FLASK_ENV", "development") == "development":
-        EMAIL_ADDRESS = EMAIL_ADDRESS or "default-email@example.com"
-        EMAIL_PASSWORD = EMAIL_PASSWORD or "default-password"
-        RECIPIENT_EMAIL = RECIPIENT_EMAIL or "default-recipient@example.com"
-        logger.warning("Using default email credentials for development. Do not use this in production!")
-    else:
-        raise ValueError("Email configuration (EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL) must be set in environment variables")
-
-# Manual product catalog with options
 # Manual product catalog with options
 products = {
     "Clothes": [
@@ -71,7 +32,7 @@ products = {
         {"id": 13, "name": "Men'S Trendy Men's Outdoor Sport Lace-up Casual Comfortable Sneakers - Canvas - Size", "price": 20000.00, "image": "/static/s3.jpg", "options": ["EU 43", "EU 44"]},
         {"id": 14, "name": "Men'S Men Fashion Quality Outdoor comfortable Casual Shoes", "price": 20999.00, "image": "/static/s4.jpg", "options": ["EU 43", "EU 44"]},
         {"id": 15, "name": "Canvas Men's Casual Simple Sport Fashion Sneakers - Comfortable Shoes", "price": 8980.00, "image": "/static/s5.jpg", "options": ["EU 39", "EU 40", "EU 44"]},
-        {"id": 16, "name": "Men Leather Shoes Oxford Wedding Corporate Formal Loafers Slip-Ons Vintage Brown", "price": 29500.00, "image": "/static/s6.jpg", "image": "/static/s6.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 16, "name": "Men Leather Shoes Oxford Wedding Corporate Formal Loafers Slip-Ons Vintage Brown", "price": 29500.00, "image": "/static/s6.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 17, "name": "Depally Men's Brogue Tie Designers Shoe Black", "price": 32000.00, "image": "/static/s7.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 18, "name": "Men's Leather Shoes Large Size-Black", "price": 16980.00, "image": "/static/s8.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 19, "name": "Men's Formal Italian Wedding Brogues Leather Shoes Lace Up Brown", "price": 27900.00, "image": "/static/s9.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
@@ -101,28 +62,24 @@ products = {
     ]
 }
 
-# Serve the index.html file at the root URL
-@app.route("/")
-@app.route("/<section>")
-def serve_index(section=None):
-    try:
-        logger.debug("Attempting to render index.html")
-        return render_template("index.html", products=products, show_section=section)
-    except Exception as e:
-        logger.error(f"Failed to render index.html: {e}")
-        return "Error rendering template", 500
+# Home Route
+@app.route('/')
+def index():
+    return render_template('index.html', products=products)
 
-# Serve static files
-@app.route("/static/<path:path>")
-def serve_static(path):
-    try:
-        logger.debug(f"Serving static file: {path}")
-        return send_from_directory("static", path)
-    except Exception as e:
-        logger.error(f"Failed to serve static file {path}: {e}")
-        return "Error serving static file", 500
+# Contact Form Route
+@app.route('/contact', methods=['POST'])
+def contact():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    message = request.form.get('message')
 
-# Paystack Payment Route - Create Checkout Session
+    if not name or not email or not message:
+        return render_template('index.html', products=products, error="All fields are required!", message_sent=False)
+
+    # Here you can add logic to handle the contact form (e.g., send an email, save to database)
+    return render_template('index.html', products=products, message_sent=True)
+
 # Paystack Payment Route - Create Checkout Session
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -228,115 +185,24 @@ def submit_address():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-# Paystack Payment Route - Verify Payment
-@app.route('/verify-payment', methods=['GET'])
+
+# Verify Payment Route
+@app.route('/verify-payment')
 def verify_payment():
     reference = request.args.get('reference')
     if not reference:
-        return redirect(url_for('serve_index', section='cancel'))
+        return redirect(url_for('index', _anchor='cancel'))
 
     try:
         response = paystack_transaction.verify(reference=reference)
         if response['status'] and response['data']['status'] == 'success':
-            return redirect(url_for('serve_index', section='success'))
+            # Payment successful, you can save order details here
+            session.pop('order_details', None)  # Clear session after successful payment
+            return redirect(url_for('index', _anchor='success'))
         else:
-            return redirect(url_for('serve_index', section='cancel'))
-
+            return redirect(url_for('index', _anchor='cancel'))
     except Exception as e:
-        return redirect(url_for('serve_index', section='cancel'))
+        return redirect(url_for('index', _anchor='cancel'))
 
-# Route for Address Submission
-@app.route('/submit_address', methods=['POST'])
-def submit_address():
-    product_id = request.form.get('product_id')
-    selected_option = request.form.get('option')
-    full_name = request.form.get('full_name')
-    address_line1 = request.form.get('address_line1')
-    address_line2 = request.form.get('address_line2')
-    city = request.form.get('city')
-    state = request.form.get('state')
-    postal_code = request.form.get('postal_code')
-    phone = request.form.get('phone')
-    email = request.form.get('email', "customer@example.com")
-
-    # Basic validation
-    if not all([product_id, full_name, address_line1, city, state, postal_code, phone, email]):
-        return jsonify({'error': 'All required fields must be filled'}), 400
-
-    product = next((item for category in products.values() for item in category if item['id'] == int(product_id)), None)
-    if not product:
-        return jsonify({'error': 'Product not found'}), 404
-
-    if not selected_option and product.get("options") and len(product.get("options")) > 0:
-        return jsonify({'error': 'Please select an option'}), 400
-
-    try:
-        # Store address details in session (optional, for later use)
-        session['order_details'] = {
-            'product_id': product_id,
-            'option': selected_option,
-            'full_name': full_name,
-            'address_line1': address_line1,
-            'address_line2': address_line2,
-            'city': city,
-            'state': state,
-            'postal_code': postal_code,
-            'phone': phone,
-            'email': email
-        }
-
-        # Initialize Paystack transaction with address metadata
-        response = paystack_transaction.initialize(
-            amount=int(product['price'] * 100),
-            email=email,
-            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
-            callback_url='https://coutour.onrender.com/verify-payment',
-            metadata={
-                "option": selected_option or "",
-                "full_name": full_name,
-                "address_line1": address_line1,
-                "address_line2": address_line2 or "",
-                "city": city,
-                "state": state,
-                "postal_code": postal_code,
-                "phone": phone
-            }
-        )
-
-        if response['status']:
-            return jsonify({'payment_url': response['data']['authorization_url']})
-        else:
-            return jsonify({'error': 'Failed to initialize payment'}), 500
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Contact form route
-@app.route("/contact", methods=["POST"])
-def contact():
-    try:
-        name = request.form["name"]
-        email = request.form["email"]
-        message = request.form["message"]
-
-        msg = MIMEMultipart()
-        msg["From"] = EMAIL_ADDRESS
-        msg["To"] = RECIPIENT_EMAIL
-        msg["Subject"] = f"New Contact Form Submission from {name}"
-        body = f"Name: {name}\nEmail: {email}\nMessage: {message}"
-        msg.attach(MIMEText(body, "plain"))
-
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, RECIPIENT_EMAIL, msg.as_string())
-
-        logger.debug("Email sent successfully")
-        return render_template("index.html", products=products, show_section='contact', message_sent=True)
-
-    except Exception as e:
-        logger.error(f"Failed to send email: {e}")
-        return render_template("index.html", products=products, show_section='contact', message_sent=False, error="Failed to send email. Please try again later.")
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=os.getenv("FLASK_ENV") == "development")
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
