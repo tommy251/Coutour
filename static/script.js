@@ -1,11 +1,15 @@
 // Show the address form and pass the product ID
 function showAddressForm(productId) {
+    // Convert productId to a number if it's a string
+    productId = parseInt(productId, 10);
+    console.log(`showAddressForm called with productId: ${productId}`);
+
     const optionSelect = document.querySelector(`.option-select[data-product-id="${productId}"]`);
     const selectedOption = optionSelect ? optionSelect.value : null;
 
     // Determine the category of the product to customize the error message
     const productCard = optionSelect ? optionSelect.closest('.product-card') : null;
-    const category = productCard ? Array.from(document.querySelectorAll('.product-grid .product-card')).indexOf(productCard) < 10 ? 'Clothes' : (Array.from(document.querySelectorAll('.product-grid .product-card')).indexOf(productCard) < 30 ? 'Shoes' : 'wristwatches') : '';
+    const category = productCard ? productCard.getAttribute('data-category') : '';
 
     // Only prompt for option if the product has an option dropdown, has more than one option, and no option is selected
     if (optionSelect && optionSelect.options.length > 1 && selectedOption === "") {
@@ -73,6 +77,8 @@ function showSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
         section.style.display = 'block';
+    } else {
+        console.error(`Section with ID ${sectionId} not found`);
     }
 }
 
@@ -129,12 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             select.addEventListener('change', function() {
+                console.log(`Dropdown changed for product ${productId}: Selected value = ${this.value}`);
                 const existingError = this.parentElement.querySelector('.error-message');
                 if (existingError) {
                     existingError.remove();
                 }
                 buyButton.disabled = this.value === "";
+                if (!buyButton.disabled) {
+                    console.log(`Buy Now button enabled for product ${productId}`);
+                }
             });
+        } else {
+            console.error(`Buy Now button not found for product ${productId}`);
         }
     });
 
@@ -145,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const optionSelect = document.querySelector(`.option-select[data-product-id="${productId}"]`);
         if (!optionSelect || optionSelect.options.length <= 1) {
             button.disabled = false;
+            console.log(`Buy Now button enabled for product ${productId} (no options)`);
         }
         // Fallback: Ensure the button is enabled if it has no option dropdown
         if (!optionSelect) {

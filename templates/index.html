@@ -89,11 +89,15 @@
         <div class="carousel-container">
             <h2>Our Products</h2>
             <div class="carousel" id="product-carousel">
-                {% for category, items in products.items() %}
-                    {% for item in items %}
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
+                {% if products %}
+                    {% for category, items in products.items() %}
+                        {% for item in items %}
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
+                {% else %}
+                    <p>No products available to display.</p>
+                {% endif %}
             </div>
             <div class="carousel-indicators" id="carousel-indicators">
                 <!-- Indicators will be added dynamically via JavaScript -->
@@ -108,41 +112,45 @@
             <p>Explore our full collection of men's fashion.</p>
         </div>
         <div class="product-grid">
-            {% for category, items in products.items() %}
-                {% for item in items %}
-                    <div class="product-card">
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
-                        <h3>{{ item.name }}</h3>
-                        <p>
-                            {% if category == "wristwatches" %}
-                                Select Age Group:
-                            {% elif category == "Clothes" %}
-                                Select Size:
-                            {% elif category == "Shoes" %}
-                                Select Size:
+            {% if products %}
+                {% for category, items in products.items() %}
+                    {% for item in items %}
+                        <div class="product-card" data-category="{{ category }}">
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                            <h3>{{ item.name }}</h3>
+                            <p>
+                                {% if category == "wristwatches" %}
+                                    Select Age Group:
+                                {% elif category == "Clothes" %}
+                                    Select Size:
+                                {% elif category == "Shoes" %}
+                                    Select Size:
+                                {% endif %}
+                            </p>
+                            {% if item.options and item.options|length > 0 %}
+                                <select class="option-select" data-product-id="{{ item.id }}">
+                                    <option value="">
+                                        {% if category == "wristwatches" %}
+                                            Select Age Group
+                                        {% else %}
+                                            Select Size
+                                        {% endif %}
+                                    </option>
+                                    {% for option in item.options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm('{{ item.id }}')" disabled>Buy Now</button>
+                            {% else %}
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm('{{ item.id }}')">Buy Now</button>
                             {% endif %}
-                        </p>
-                        {% if item.options and item.options|length > 0 %}
-                            <select class="option-select" data-product-id="{{ item.id }}">
-                                <option value="">
-                                    {% if category == "wristwatches" %}
-                                        Select Age Group
-                                    {% else %}
-                                        Select Size
-                                    {% endif %}
-                                </option>
-                                {% for option in item.options %}
-                                    <option value="{{ option }}">{{ option }}</option>
-                                {% endfor %}
-                            </select>
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
-                        {% else %}
-                            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
-                        {% endif %}
-                        <p class="price">₦ {{ item.price }}</p>
-                    </div>
+                            <p class="price">₦ {{ item.price }}</p>
+                        </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            {% else %}
+                <p>No products available to display.</p>
+            {% endif %}
         </div>
     </section>
 
