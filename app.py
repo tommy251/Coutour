@@ -1,7 +1,6 @@
 import os
 import json
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from paystackapi.transaction import Transaction as PaystackTransaction
 from paystackapi.paystack import Paystack
 
 app = Flask(__name__)
@@ -10,7 +9,6 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'your-secret-key')
 # Paystack configuration
 paystack_secret_key = os.getenv('PAYSTACK_SECRET_KEY', 'your-paystack-secret-key')
 paystack = Paystack(secret_key=paystack_secret_key)
-paystack_transaction = PaystackTransaction(paystack)
 
 # Manual product catalog with options
 products = {
@@ -104,7 +102,7 @@ def create_checkout_session():
         return jsonify({'error': 'Please select an option'}), 400
 
     try:
-        response = paystack_transaction.initialize(
+        response = paystack.transaction.initialize(
             amount=int(product['price'] * 100),
             email=email,
             reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
@@ -161,7 +159,7 @@ def submit_address():
         }
 
         # Initialize Paystack transaction with address metadata
-        response = paystack_transaction.initialize(
+        response = paystack.transaction.initialize(
             amount=int(product['price'] * 100),
             email=email,
             reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
@@ -194,7 +192,7 @@ def verify_payment():
         return redirect(url_for('index', _anchor='cancel'))
 
     try:
-        response = paystack_transaction.verify(reference=reference)
+        response = paystack.transaction.verify(reference=reference)
         if response['status'] and response['data']['status'] == 'success':
             # Payment successful, you can save order details here
             session.pop('order_details', None)  # Clear session after successful payment
