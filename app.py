@@ -5,6 +5,10 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv  # Add this import for .env file support
+
+# Load environment variables from .env file (optional)
+load_dotenv()
 
 # Set up logging
 log_level = os.getenv("LOG_LEVEL", "DEBUG")
@@ -13,14 +17,24 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Set Flask secret key
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 if not app.secret_key:
-    raise ValueError("FLASK_SECRET_KEY must be set in environment variables")
+    if os.getenv("FLASK_ENV", "development") == "development":
+        app.secret_key = "default-secret-key-for-development-only"
+        logger.warning("Using default FLASK_SECRET_KEY for development. Do not use this in production!")
+    else:
+        raise ValueError("FLASK_SECRET_KEY must be set in environment variables")
 
 # Configure Paystack using environment variables
 PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
 if not PAYSTACK_SECRET_KEY:
-    raise ValueError("PAYSTACK_SECRET_KEY must be set in environment variables")
+    if os.getenv("FLASK_ENV", "development") == "development":
+        PAYSTACK_SECRET_KEY = "default-paystack-key-for-development-only"
+        logger.warning("Using default PAYSTACK_SECRET_KEY for development. Do not use this in production!")
+    else:
+        raise ValueError("PAYSTACK_SECRET_KEY must be set in environment variables")
 paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
 
 # Email configuration (Gmail SMTP)
@@ -28,7 +42,13 @@ EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
 if not all([EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL]):
-    raise ValueError("Email configuration must be set in environment variables")
+    if os.getenv("FLASK_ENV", "development") == "development":
+        EMAIL_ADDRESS = EMAIL_ADDRESS or "default-email@example.com"
+        EMAIL_PASSWORD = EMAIL_PASSWORD or "default-password"
+        RECIPIENT_EMAIL = RECIPIENT_EMAIL or "default-recipient@example.com"
+        logger.warning("Using default email credentials for development. Do not use this in production!")
+    else:
+        raise ValueError("Email configuration (EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL) must be set in environment variables")
 
 # Manual product catalog with sizes as a list
 products = {
@@ -66,18 +86,18 @@ products = {
         {"id": 19, "name": "Gentleman's Casual Frosted Men Leather Shoes - Black", "price": 38990.00, "image": "/static/s19.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 20, "name": "Vangelo NEW VANGELO LUXURY CORPORATE AND WEDDING DESIGNER MEN'S SHOE BROWN", "price": 27500.00, "image": "/static/s20.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
     ],
-   "wristwatches": [
-    {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
-    {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
-    {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
-    {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
-    {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
-    {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
-    {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
-    {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
-    {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
-    {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
-]
+    "wristwatches": [
+        {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
+        {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
+        {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
+        {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
+        {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
+        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
+        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
+        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
+        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
+        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
+    ]
 }
 
 # Serve the index.html file at the root URL
