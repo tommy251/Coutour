@@ -164,3 +164,104 @@ document.addEventListener('DOMContentLoaded', () => {
         hamburger.classList.toggle('open');
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    showSection('home');
+
+    // Carousel setup
+    const carousel = document.getElementById('product-carousel');
+    const images = carousel.querySelectorAll('img');
+    const indicatorsContainer = document.getElementById('carousel-indicators');
+    let currentIndex = 0;
+
+    // Create indicators
+    images.forEach((_, index) => {
+        const indicator = document.createElement('span');
+        indicator.addEventListener('click', () => {
+            currentIndex = index;
+            updateCarousel();
+        });
+        indicatorsContainer.appendChild(indicator);
+    });
+
+    function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+        const indicators = indicatorsContainer.querySelectorAll('span');
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Auto-scroll every 3 seconds
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % images.length;
+        updateCarousel();
+    }, 3000);
+
+    // Initial update
+    updateCarousel();
+
+    // Add event listeners to all size select dropdowns
+    const sizeSelects = document.querySelectorAll('.size-select');
+    sizeSelects.forEach(select => {
+        const productId = select.getAttribute('data-product-id');
+        const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
+
+        if (buyButton) {
+            if (select.options.length > 1) {
+                buyButton.disabled = true;
+                console.log(`Disabled Buy Now button for Product ID: ${productId} (size selection required)`);
+            } else {
+                buyButton.disabled = false;
+                console.log(`Enabled Buy Now button for Product ID: ${productId} (no size selection required)`);
+            }
+
+            select.addEventListener('change', function() {
+                const existingError = this.parentElement.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+                buyButton.disabled = this.value === "";
+                console.log(`Buy Now button for Product ID: ${productId} is now ${buyButton.disabled ? 'disabled' : 'enabled'}`);
+            });
+        }
+    });
+
+    // Ensure buttons for products without sizes are clickable
+    const buyButtons = document.querySelectorAll('.buy-now');
+    buyButtons.forEach(button => {
+        const productId = button.getAttribute('data-product-id');
+        const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
+        if (!sizeSelect || sizeSelect.options.length <= 1) {
+            button.disabled = false;
+            console.log(`Ensured Buy Now button is enabled for Product ID: ${productId} (no size dropdown or single option)`);
+        } else {
+            console.log(`Buy Now button for Product ID: ${productId} remains disabled (size dropdown exists)`);
+        }
+        // Fallback: Ensure the button is enabled if it has no size dropdown
+        if (!sizeSelect) {
+            button.removeAttribute('disabled');
+            console.log(`Fallback: Removed disabled attribute for Product ID: ${productId}`);
+        }
+    });
+
+    // Aggressive fallback: Ensure all Buy Now buttons without size dropdowns are enabled after a short delay
+    setTimeout(() => {
+        const finalCheckButtons = document.querySelectorAll('.buy-now');
+        finalCheckButtons.forEach(button => {
+            const productId = button.getAttribute('data-product-id');
+            const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
+            if (!sizeSelect) {
+                button.removeAttribute('disabled');
+                console.log(`Final Check: Ensured Buy Now button is enabled for Product ID: ${productId}`);
+            }
+        });
+    }, 1000);
+
+    // Toggle hamburger menu
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        hamburger.classList.toggle('open');
+    });
+});
