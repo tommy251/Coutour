@@ -185,7 +185,7 @@
             const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
             const selectedSize = sizeSelect ? sizeSelect.value : null;
 
-            // If the product has sizes, ensure a size is selected
+            // Only prompt for size if the product has a size dropdown and no size is selected
             if (sizeSelect && selectedSize === "") {
                 alert('Please select a size before proceeding.');
                 return;
