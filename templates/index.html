@@ -3,47 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contour - Affordable Fashion</title>
+    <title>Contour - Men's Fashion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <style>
-        /* Carousel Styles */
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        .carousel {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-        .carousel img {
-            width: 100%;
-            height: auto;
-            flex-shrink: 0;
-        }
-        .carousel-indicators {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .carousel-indicators span {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background-color: #bbb;
-            border-radius: 50%;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-        .carousel-indicators .active {
-            background-color: #333;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation Bar with Hamburger Menu -->
     <nav>
         <div class="logo">
             <h3 class="logo-text">Contour.</h3>
@@ -60,155 +24,98 @@
         </ul>
     </nav>
 
-    <!-- Home Section (ZOHO-Inspired Hero Section) -->
+    <!-- Home Section -->
     <section id="home" class="section">
-        <div class="hero-section">
-            <img src="/static/Man.png" alt="Contour Hero Banner" class="hero-image">
-            <div class="hero-content">
-                <h1 class="contour-title">Contour</h1>
-                <a href="#shop" onclick="showSection('shop')" class="shop-now-btn">Shop Now</a>
-            </div>
+        <div class="hero">
+            <h1>Welcome to Contour</h1>
+            <p>Explore the latest trends in men's fashion.</p>
+            <a href="#shop" onclick="showSection('shop')" class="cta-button">Shop Now</a>
         </div>
-
-        <!-- Category Section -->
-        <div class="category-section">
-            <h2>Explore Categories</h2>
-            <div class="category-grid">
-                <div class="category-card">
-                    <img src="/static/men.jpeg" alt="Men's Clothing">
-                    <h3>Men's Clothing</h3>
-                </div>
-                <div class="category-card">
-                    <img src="/static/Blacksuit.jpeg" alt="Wristwatches">
-                    <h3>Wristwatches</h3>
-                </div>
-            </div>
-        </div>
-
-        <!-- Auto-Scrolling Product Image Carousel -->
         <div class="carousel-container">
-            <h2>Our Products</h2>
-            <div class="carousel" id="product-carousel">
-                {% for category, items in products.items() %}
-                    {% for item in items %}
-                        <img src="{{ item.image }}" alt="{{ item.name }}">
+            <div id="product-carousel" class="product-carousel">
+                {% if products %}
+                    {% for category, items in products.items() %}
+                        {% for item in items %}
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
+                {% else %}
+                    <p>No products available to display.</p>
+                {% endif %}
             </div>
-            <div class="carousel-indicators" id="carousel-indicators">
-                <!-- Indicators will be added dynamically via JavaScript -->
-            </div>
+            <div id="carousel-indicators" class="carousel-indicators"></div>
         </div>
     </section>
 
     <!-- Shop Section -->
-    <!-- Shop Section -->
-<section id="shop" class="section" style="display: none;">
-    <div class="shop-hero">
-        <h1>Shop Contour</h1>
-        <p>Explore our full collection of men's fashion.</p>
-    </div>
-    <div class="product-grid">
-        {% if item.options %}
-        {% if item.options is mapping %}
-            {% for option_type, values in item.options.items() %}
-                <p>Select {{ option_type|capitalize }}:</p>
-                <select class="option-select" data-product-id="{{ item.id }}" data-option-type="{{ option_type }}">
-                    <option value="">Select {{ option_type|capitalize }}</option>
-                    {% for value in values %}
-                        <option value="{{ value }}">{{ value }}</option>
+    <section id="shop" class="section" style="display: none;">
+        <div class="shop-hero">
+            <h1>Shop Contour</h1>
+            <p>Explore our full collection of men's fashion.</p>
+        </div>
+        <div class="product-grid">
+            {% if products %}
+                {% for category, items in products.items() %}
+                    {% for item in items %}
+                        <div class="product-card">
+                            <img src="{{ item.image }}" alt="{{ item.name }}">
+                            <h3>{{ item.name }}</h3>
+                            <p>
+                                {% if category == "wristwatches" %}
+                                    Select Color:
+                                {% elif category == "Clothes" %}
+                                    Select Size:
+                                {% elif category == "Shoes" %}
+                                    Select Size:
+                                {% endif %}
+                            </p>
+                            {% if item.options and item.options|length > 0 %}
+                                <select class="option-select" data-product-id="{{ item.id }}">
+                                    <option value="">{% if category == "wristwatches" %}Select Color{% else %}Select Size{% endif %}</option>
+                                    {% for option in item.options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
+                            {% else %}
+                                <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
+                            {% endif %}
+                            <p class="price">₦ {{ item.price }}</p>
+                        </div>
                     {% endfor %}
-                </select>
-            {% endfor %}
-            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
-        {% else %}
-            <p>
-                {% if category == "wristwatches" %}
-                    Select Color:
-                {% elif category == "Clothes" %}
-                    Select Size:
-                {% elif category == "Shoes" %}
-                    Select Size:
-                {% endif %}
-            </p>
-            <select class="option-select" data-product-id="{{ item.id }}">
-                <option value="">{% if category == "wristwatches" %}Select Color{% else %}Select Size{% endif %}</option>
-                {% for option in item.options %}
-                    <option value="{{ option }}">{{ option }}</option>
                 {% endfor %}
-            </select>
-            <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})" disabled>Buy Now</button>
-        {% endif %}
-    {% else %}
-        <button class="buy-now" data-product-id="{{ item.id }}" onclick="showAddressForm({{ item.id }})">Buy Now</button>
-    {% endif %}
-    </div>
-</section>
+            {% else %}
+                <p>No products available to display.</p>
+            {% endif %}
+        </div>
+    </section>
 
-    <!-- Address Input Section -->
+    <!-- Address Section -->
     <section id="address" class="section" style="display: none;">
-        <h1>Delivery Information</h1>
-        <p>Please provide your delivery address and contact details.</p>
-        <form id="address-form" class="address-form" onsubmit="submitOrder(event)">
+        <h2>Delivery Information</h2>
+        <form id="address-form" onsubmit="submitOrder(event)">
             <input type="hidden" id="product-id" name="product_id">
-            <input type="hidden" id="selected-size" name="size">
-            <input type="text" name="full_name" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="address_line1" placeholder="Address Line 1" required>
-            <input type="text" name="address_line2" placeholder="Address Line 2 (Optional)">
-            <input type="text" name="city" placeholder="City" required>
-            <input type="text" name="state" placeholder="State" required>
-            <input type="text" name="postal_code" placeholder="Postal Code" required>
-            <input type="tel" name="phone" placeholder="Phone Number" required>
-            <button type="submit">Submit Address</button>
+            <input type="hidden" id="selected-size" name="selected_size">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+            <label for="address">Delivery Address:</label>
+            <textarea id="address-input" name="address" required></textarea>
+            <button type="submit">Proceed to Payment</button>
         </form>
     </section>
 
     <!-- Contact Section -->
     <section id="contact" class="section" style="display: none;">
-        <h1>Contact Us</h1>
-        <p>Have any questions? Reach out to us!</p>
-        <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <textarea name="message" placeholder="Message" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
-        {% if message_sent %}
-            <p class="success-message">Thank you! Your message has been sent.</p>
-        {% endif %}
-        {% if error %}
-            <p class="error-message">{{ error }}</p>
-        {% endif %}
+        <h2>Contact Us</h2>
+        <p>Email: tommybab7@gmail.com.com</p>
+        <p>Phone: +234 9067268606</p>
+        <p>Follow us on social media for updates!</p>
     </section>
 
-    <!-- Success Section -->
-    <section id="success" class="section" style="display: none;">
-        <h1>Payment Successful!</h1>
-        <p>Thank you for your order with Contour. You’ll receive a confirmation soon.</p>
-        <a href="#shop" onclick="showSection('shop')">Back to Shop</a>
-    </section>
-
-    <!-- Cancel Section -->
-    <section id="cancel" class="section" style="display: none;">
-        <h1>Payment Canceled</h1>
-        <p>Your payment was canceled. Feel free to try again or contact support.</p>
-        <a href="#shop" onclick="showSection('shop')">Back to Shop</a>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#home" onclick="showSection('home')">Home</a>
-                <a href="#shop" onclick="showSection('shop')">Shop</a>
-                <a href="#contact" onclick="showSection('contact')">Contact</a>
-            </div>
-            <p>© 2025 Contour. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Load JavaScript from script.js -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
