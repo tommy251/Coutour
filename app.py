@@ -8,25 +8,34 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+log_level = os.getenv("LOG_LEVEL", "DEBUG")
+logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_secret_key")  # Add a secret key for session management
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
+if not app.secret_key:
+    raise ValueError("FLASK_SECRET_KEY must be set in environment variables")
 
 # Configure Stripe using environment variables
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "your_stripe_secret_key")
-stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY", "your_stripe_public_key")
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+stripe_public_key = os.getenv("STRIPE_PUBLIC_KEY")
+if not stripe.api_key or not stripe_public_key:
+    raise ValueError("Stripe API keys must be set in environment variables")
 
 # Configure Paystack using environment variables
-PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
+if not PAYSTACK_SECRET_KEY:
+    raise ValueError("PAYSTACK_SECRET_KEY must be set in environment variables")
 paystack_transaction = Transaction(secret_key=PAYSTACK_SECRET_KEY)
 
 # Email configuration (Gmail SMTP)
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS", "tommybab7@gmail.com")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")
-RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL", "tommybab7@gmail.com")
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
+if not all([EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL]):
+    raise ValueError("Email configuration must be set in environment variables")
 
 # Manual product catalog with sizes as a list
 products = {
@@ -65,17 +74,18 @@ products = {
         {"id": 20, "name": "Vangelo NEW VANGELO LUXURY CORPORATE AND WEDDING DESIGNER MEN'S SHOE BROWN", "price": 27500.00, "image": "/static/s20.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
     ],
     "wristwatches": [
-    {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
-    {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
-    {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
-    {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
-    {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
-    {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
-    {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
-    {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
-    {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
-    {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
-]
+        {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
+        {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "sizes": []},
+        {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
+        {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
+        {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
+        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "sizes": []},
+        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "sizes": []},
+        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "sizes": []},
+        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "sizes": []},
+        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "sizes": []}
+    ]
+}
 
 # Serve the index.html file at the root URL
 @app.route("/")
@@ -107,10 +117,12 @@ def pay(product_id):
             return jsonify({"error": "Product not found"}), 404
         
         selected_size = request.form.get("size")
-        if not selected_size and product.get("sizes"):
+        if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
             return jsonify({"error": "Please select a size"}), 400
 
+        email = request.form.get("email", "customer@example.com")  # Collect email from form
         session = stripe.checkout.Session.create(
+            customer_email=email,
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
@@ -136,6 +148,7 @@ def create_checkout_session():
     data = request.get_json()
     product_id = data.get('productId')
     selected_size = data.get('size')
+    email = data.get("email", "customer@example.com")  # Collect email from form
 
     product = None
     for category, items in products.items():
@@ -149,13 +162,13 @@ def create_checkout_session():
     if not product:
         return jsonify({'error': 'Product not found'}), 404
 
-    if not selected_size and product.get("sizes"):
+    if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
         return jsonify({'error': 'Please select a size'}), 400
 
     try:
         response = paystack_transaction.initialize(
             amount=int(product['price'] * 100),
-            email='customer@example.com',
+            email=email,
             reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
             callback_url='https://coutour.onrender.com/verify-payment',
             metadata={"size": selected_size or ""}
@@ -198,17 +211,18 @@ def submit_address():
     state = request.form.get('state')
     postal_code = request.form.get('postal_code')
     phone = request.form.get('phone')
+    email = request.form.get('email', "customer@example.com")  # Collect email from form
 
     # Basic validation
-    if not all([product_id, full_name, address_line1, city, state, postal_code, phone]):
+    if not all([product_id, full_name, address_line1, city, state, postal_code, phone, email]):
         return jsonify({'error': 'All required fields must be filled'}), 400
-
-    if not selected_size and any(item['sizes'] for category in products.values() for item in category if item['id'] == int(product_id)):
-        return jsonify({'error': 'Please select a size'}), 400
 
     product = next((item for category in products.values() for item in category if item['id'] == int(product_id)), None)
     if not product:
         return jsonify({'error': 'Product not found'}), 404
+
+    if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
+        return jsonify({'error': 'Please select a size'}), 400
 
     try:
         # Store address details in session (optional, for later use)
@@ -221,13 +235,14 @@ def submit_address():
             'city': city,
             'state': state,
             'postal_code': postal_code,
-            'phone': phone
+            'phone': phone,
+            'email': email
         }
 
         # Initialize Paystack transaction with address metadata
         response = paystack_transaction.initialize(
             amount=int(product['price'] * 100),
-            email='customer@example.com',  # Replace with dynamic email if collected
+            email=email,
             reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
             callback_url='https://coutour.onrender.com/verify-payment',
             metadata={
@@ -275,7 +290,7 @@ def contact():
 
     except Exception as e:
         logger.error(f"Failed to send email: {e}")
-        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, show_section='contact', message_sent=False, error=str(e))
+        return render_template("index.html", products=products, stripe_public_key=stripe_public_key, show_section='contact', message_sent=False, error="Failed to send email. Please try again later.")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=os.getenv("FLASK_ENV") == "development")
