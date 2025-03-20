@@ -88,18 +88,19 @@ products = {
         {"id": 20, "name": "Vangelo NEW VANGELO LUXURY CORPORATE AND WEDDING DESIGNER MEN'S SHOE BROWN", "price": 27500.00, "image": "/static/s20.jpg", "options": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
     ],
     "wristwatches": [
-        {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "options": ["Gold", "Silver", "Black"]},
-        {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "options": ["Gold", "Brown", "Black"]},
-        {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "options": ["Black", "Silver", "Blue"]},
-        {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "options": ["Silver", "Gold", "Rose Gold"]},
-        {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "options": ["Black", "Blue", "Green"]},
-        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "options": ["Gold", "Silver", "Black"]},
-        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "options": ["Black", "White", "Grey"]},
-        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "options": ["Brown", "Black", "Blue"]},
-        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "options": ["Black", "Silver", "Red"]},
-        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "options": ["Bronze", "Silver", "Black"]}
+        {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 2, "name": "Wrist Watche Fashion Iuminous Waterproof Simple Quartz Watch Gold/Brown", "price": 10000.00, "image": "/static/w2.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13990.00, "image": "/static/w6.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10990.00, "image": "/static/w7.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7990.00, "image": "/static/w8.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20500.00, "image": "/static/w9.jpg", "options": ["Adults", "Teenager"]},
+        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "options": ["Adults", "Teenager"]}
     ]
 }
+
 # Serve the index.html file at the root URL
 @app.route("/")
 @app.route("/<section>")
@@ -122,12 +123,13 @@ def serve_static(path):
         return "Error serving static file", 500
 
 # Paystack Payment Route - Create Checkout Session
+# Paystack Payment Route - Create Checkout Session
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     data = request.get_json()
     product_id = data.get('productId')
-    selected_size = data.get('size')
-    email = data.get("email", "customer@example.com")  # Collect email from form
+    selected_option = data.get('size')  # Update this to match the form field
+    email = data.get("email", "customer@example.com")
 
     product = None
     for category, items in products.items():
@@ -141,8 +143,8 @@ def create_checkout_session():
     if not product:
         return jsonify({'error': 'Product not found'}), 404
 
-    if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
-        return jsonify({'error': 'Please select a size'}), 400
+    if not selected_option and product.get("options") and len(product.get("options")) > 0:
+        return jsonify({'error': 'Please select an option'}), 400
 
     try:
         response = paystack_transaction.initialize(
@@ -150,7 +152,73 @@ def create_checkout_session():
             email=email,
             reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
             callback_url='https://coutour.onrender.com/verify-payment',
-            metadata={"size": selected_size or ""}
+            metadata={"option": selected_option or ""}
+        )
+
+        if response['status']:
+            return jsonify({'payment_url': response['data']['authorization_url']})
+        else:
+            return jsonify({'error': 'Failed to initialize payment'}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# New Route for Address Submission
+@app.route('/submit_address', methods=['POST'])
+def submit_address():
+    product_id = request.form.get('product_id')
+    selected_option = request.form.get('size')  # Update this to match the form field
+    full_name = request.form.get('full_name')
+    address_line1 = request.form.get('address_line1')
+    address_line2 = request.form.get('address_line2')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    postal_code = request.form.get('postal_code')
+    phone = request.form.get('phone')
+    email = request.form.get('email', "customer@example.com")
+
+    # Basic validation
+    if not all([product_id, full_name, address_line1, city, state, postal_code, phone, email]):
+        return jsonify({'error': 'All required fields must be filled'}), 400
+
+    product = next((item for category in products.values() for item in category if item['id'] == int(product_id)), None)
+    if not product:
+        return jsonify({'error': 'Product not found'}), 404
+
+    if not selected_option and product.get("options") and len(product.get("options")) > 0:
+        return jsonify({'error': 'Please select an option'}), 400
+
+    try:
+        # Store address details in session (optional, for later use)
+        session['order_details'] = {
+            'product_id': product_id,
+            'option': selected_option,
+            'full_name': full_name,
+            'address_line1': address_line1,
+            'address_line2': address_line2,
+            'city': city,
+            'state': state,
+            'postal_code': postal_code,
+            'phone': phone,
+            'email': email
+        }
+
+        # Initialize Paystack transaction with address metadata
+        response = paystack_transaction.initialize(
+            amount=int(product['price'] * 100),
+            email=email,
+            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
+            callback_url='https://coutour.onrender.com/verify-payment',
+            metadata={
+                "option": selected_option or "",
+                "full_name": full_name,
+                "address_line1": address_line1,
+                "address_line2": address_line2 or "",
+                "city": city,
+                "state": state,
+                "postal_code": postal_code,
+                "phone": phone
+            }
         )
 
         if response['status']:
