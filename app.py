@@ -36,11 +36,11 @@ products = {
         {"id": 3, "name": "Trendy Blue Up And Down Wears Pk2", "price": 20000.00, "image": "/static/c3.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 4, "name": "4 IN 1 UNISEX COLLAR N PLAIN ROUND NECK T-SHIRT POLO SHIRT FOR MEN", "price": 25000.00, "image": "/static/c4.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 5, "name": "Men`s 3 In 1 Sleeveless Hoodie T-Shirts For Gym & Sport - Multi", "price": 20000.00, "image": "/static/c5.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
-        {"id": 6, "name": "2 In 1 Classic Mens Formal Fit Shirts - Black And Wine", "price": 16000.00, "image": "/static/c6.jpg", "sizes": []},
-        {"id": 7, "name": "Kingskartel Kings Kartel Tank Top/Sleeveless 4 In One Combo", "price": 22999.00, "image": "/static/c7.jpg", "sizes": []},
-        {"id": 8, "name": "Black And Green Corduroy T-Shirt", "price": 18000.00, "image": "/static/c8.jpg", "sizes": []},
-        {"id": 9, "name": "Green With Patch Brown Corduroy T-shirt", "price": 18000.00, "image": "/static/c9.jpg", "sizes": []},
-        {"id": 10, "name": "3 In 1 Casual Straight Cut Joggers Pants -Dark Grey/Black/ Light Grey", "price": 36999.00, "image": "/static/c10.jpg", "sizes": []}
+        {"id": 6, "name": "2 In 1 Classic Mens Formal Fit Shirts - Black And Wine", "price": 16000.00, "image": "/static/c6.jpg", "sizes": ["S", "M", "L", "XL"]},
+        {"id": 7, "name": "Kingskartel Kings Kartel Tank Top/Sleeveless 4 In One Combo", "price": 22999.00, "image": "/static/c7.jpg", "sizes": ["S", "M", "L", "XL"]},
+        {"id": 8, "name": "Black And Green Corduroy T-Shirt", "price": 18000.00, "image": "/static/c8.jpg", "sizes": ["S", "M", "L", "XL"]},
+        {"id": 9, "name": "Green With Patch Brown Corduroy T-shirt", "price": 18000.00, "image": "/static/c9.jpg", "sizes": ["S", "M", "L", "XL"]},
+        {"id": 10, "name": "3 In 1 Casual Straight Cut Joggers Pants -Dark Grey/Black/ Light Grey", "price": 36999.00, "image": "/static/c10.jpg", "sizes": ["S", "M", "L", "XL"]}
     ],
     "Shoes": [
         {"id": 1, "name": "Men'S Lightweight Shoes - Casual Athletic Sneakers - Black Canvas", "price": 8999.00, "image": "/static/s1.jpg", "sizes": ["EU 40", "EU 41", "EU 43", "EU 44"]},

@@ -61,7 +61,7 @@
                             <img src="{{ item.image }}" alt="{{ item.name }}">
                             <h3>{{ item.name }}</h3>
                             <p class="price">₦ {{ item.price }}</p>
-                            {% if item.sizes %}
+                            {% if item.sizes and item.sizes|length > 0 %}
                                 <select class="size-select" data-product-id="{{ item.id }}">
                                     <option value="">Select Size</option>
                                     {% for size in item.sizes %}
@@ -91,8 +91,8 @@
                     <div class="product-card">
                         <img src="{{ item.image }}" alt="{{ item.name }}">
                         <h3>{{ item.name }}</h3>
-                        <p>{{ item.description if not item.sizes else "Available Sizes:" }}</p>
-                        {% if item.sizes %}
+                        <p>{{ item.description if not item.sizes or item.sizes|length == 0 else "Available Sizes:" }}</p>
+                        {% if item.sizes and item.sizes|length > 0 %}
                             <select class="size-select" data-product-id="{{ item.id }}">
                                 <option value="">Select Size</option>
                                 {% for size in item.sizes %}
@@ -185,6 +185,7 @@
             const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
             const selectedSize = sizeSelect ? sizeSelect.value : null;
 
+            // If the product has sizes, ensure a size is selected
             if (sizeSelect && selectedSize === "") {
                 alert('Please select a size before proceeding.');
                 return;
@@ -223,22 +224,40 @@
             }
         });
 
-        // Show Home section by default
+        // Show Home section by default and set up size selection logic
         document.addEventListener('DOMContentLoaded', () => {
             showSection('home');
 
             // Add event listeners to all size select dropdowns
             const sizeSelects = document.querySelectorAll('.size-select');
             sizeSelects.forEach(select => {
+                const productId = select.getAttribute('data-product-id');
+                const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
+
+                // Ensure the button is initially disabled if a size selection is required
+                if (select.options.length > 1) { // Check if there are sizes to select
+                    buyButton.disabled = true;
+                } else {
+                    buyButton.disabled = false;
+                }
+
                 select.addEventListener('change', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    const buyButton = document.querySelector(`.buy-now[data-product-id="${productId}"]`);
                     if (this.value !== "") {
                         buyButton.disabled = false;
                     } else {
                         buyButton.disabled = true;
                     }
                 });
+            });
+
+            // Ensure buttons for products without sizes are clickable
+            const buyButtons = document.querySelectorAll('.buy-now');
+            buyButtons.forEach(button => {
+                const productId = button.getAttribute('data-product-id');
+                const sizeSelect = document.querySelector(`.size-select[data-product-id="${productId}"]`);
+                if (!sizeSelect) { // If there's no size select dropdown, the button should be clickable
+                    button.disabled = false;
+                }
             });
         });
 
