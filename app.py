@@ -36,11 +36,11 @@ products = {
         {"id": 3, "name": "Trendy Blue Up And Down Wears Pk2", "price": 20000.00, "image": "/static/c3.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 4, "name": "4 IN 1 UNISEX COLLAR N PLAIN ROUND NECK T-SHIRT POLO SHIRT FOR MEN", "price": 25000.00, "image": "/static/c4.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
         {"id": 5, "name": "Men`s 3 In 1 Sleeveless Hoodie T-Shirts For Gym & Sport - Multi", "price": 20000.00, "image": "/static/c5.jpg", "sizes": ["S", "M", "L", "XL", "XXL", "XXXL"]},
-        {"id": 6, "name": "Classic Watch", "price": 3999.00, "image": "/static/c6.jpg", "sizes": []},
-        {"id": 7, "name": "Classic Watch", "price": 3999.00, "image": "/static/c7.jpg", "sizes": []},
-        {"id": 8, "name": "Classic Watch", "price": 3999.00, "image": "/static/c8.jpg", "sizes": []},
-        {"id": 9, "name": "Classic Watch", "price": 3999.00, "image": "/static/c9.jpg", "sizes": []},
-        {"id": 10, "name": "Classic Watch", "price": 3999.00, "image": "/static/c10.jpg", "sizes": []}
+        {"id": 6, "name": "2 In 1 Classic Mens Formal Fit Shirts - Black And Wine.", "price": 16,000.00, "image": "/static/c6.jpg", "sizes": []},
+        {"id": 7, "name": "Kingskartel Kings Kartel Tank Top/Sleeveless 4 In One Combo", "price": 22,999.00, "image": "/static/c7.jpg", "sizes": []},
+        {"id": 8, "name": "Black And Green Corduroy T-Shirt", "price": 18,000.00, "image": "/static/c8.jpg", "sizes": []},
+        {"id": 9, "name": "Green With Patch Brown Corduroy T-shirt", "price": 18,000.00, "image": "/static/c9.jpg", "sizes": []},
+        {"id": 10, "name": "3 In 1 Casual Straight Cut Joggers Pants -Dark Grey/Black/ Light Grey", "price": 36,999.00, "image": "/static/c10.jpg", "sizes": []}
     ],
     "Shoes": [
         {"id": 1, "name": "Men'S Lightweight Shoes - Casual Athletic Sneakers - Black Canvas", "price": 8999.00, "image": "/static/s1.jpg", "sizes": ["EU 40", "EU 41", "EU 43", "EU 44"]},
@@ -53,16 +53,16 @@ products = {
         {"id": 8, "name": "Men's Leather Shoes Large Size-Black", "price": 16980.00, "image": "/static/s8.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 9, "name": "Men's Formal Italian Wedding Brogues Leather Shoes Lace Up Brown", "price": 27900.00, "image": "/static/s9.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
         {"id": 10, "name": "Men'S 2024 Men's Casual Simple Board Sport Running Shoes - Fashion Outdoor Shoes", "price": 8999.00, "image": "/static/s10.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 11, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s11.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 12, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s12.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 13, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s13.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 14, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s14.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 15, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s15.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 16, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s16.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 17, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s17.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 18, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s18.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 19, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s19.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
-        {"id": 20, "name": "DEPALLY ROUND STONE DESIGNERS SHOE BLACK", "price": 28980.00, "image": "/static/s20.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
+        {"id": 11, "name": "Men's All-match Leather Shoes", "price": 30,499.00, "image": "/static/s11.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 12, "name": "Lit Men's Fashion Sports Outdoor Running Sneakers - Sports Shoes ", "price": 20,999.00, "image": "/static/s12.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 13, "name": "2021 New Men's Damping Running Shoes Breathable Sneaker", "price": 52,084.00, "image": "/static/s13.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 14, "name": "ElegantMen's Half Shoe", "price": 28980.00, "image": "/static/s14.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 15, "name": "Executive Business Men Leather Loafer Shoes- Black", "price": 6,999.00, "image": "/static/s15.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 16, "name": "Foreign Fashionable Half Shoe", "price": 17,000.00, "image": "/static/s16.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 17, "name": "Classic Men's Foreign Half Shoe", "price": 25,000.00, "image": "/static/s17.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 18, "name": "NEW ARRIVAL SUEDE TIE BLACK SHOE", "price": 17,000.00, "image": "/static/s18.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 19, "name": "Gentleman's Casual Frosted Men Leather Shoes - Black", "price": 38,990.00, "image": "/static/s19.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]},
+        {"id": 20, "name": "Vangelo NEW VANGELO LUXURY CORPORATE AND WEDDING DESIGNER MEN'S SHOE BROWN", "price": 27,500.00, "image": "/static/s20.jpg", "sizes": ["EU 40", "EU 41", "EU 42", "EU 43", "EU 44", "EU 45"]}
     ],
     "wristwatches": [
         {"id": 1, "name": "DS Stone Iced Mens Wristwatch Hand Chain", "price": 20000.00, "image": "/static/w1.jpg", "sizes": []},
@@ -70,11 +70,11 @@ products = {
         {"id": 3, "name": "ARHANORY Men's Quartz Watches Business Wristwatch Stylish - Black", "price": 10000.00, "image": "/static/w3.jpg", "sizes": []},
         {"id": 4, "name": "VERY ICY! ICE-BOX Studded Chain Watch + Sophisticated ICY Armlet For Boss", "price": 50000.00, "image": "/static/w4.jpg", "sizes": []},
         {"id": 5, "name": "2 IN 1 Men's Watch Fashion Waterproof Sport Quartz Business Watch", "price": 10000.00, "image": "/static/w5.jpg", "sizes": []},
-        {"id": 6, "name": "Classic Watch", "price": 3999.00, "image": "/static/w6.jpg", "sizes": []},
-        {"id": 7, "name": "Classic Watch", "price": 3999.00, "image": "/static/w7.jpg", "sizes": []},
-        {"id": 8, "name": "Classic Watch", "price": 3999.00, "image": "/static/w8.jpg", "sizes": []},
-        {"id": 9, "name": "Classic Watch", "price": 3999.00, "image": "/static/w9.jpg", "sizes": []},
-        {"id": 10, "name": "Classic Watch", "price": 3990.00, "image": "/static/w10.jpg", "sizes": []}
+        {"id": 6, "name": "Men Non Tarnish Gold Watch + Cuban Handchain", "price": 13,990.00, "image": "/static/w6.jpg", "sizes": []},
+        {"id": 7, "name": "BLAZE Full Touch Screen Watch - For Android & IOS", "price": 10,990.00, "image": "/static/w7.jpg", "sizes": []},
+        {"id": 8, "name": "Men Brown Silicon Wristwatch", "price": 7,990.00, "image": "/static/w8.jpg", "sizes": []},
+        {"id": 9, "name": "Mens Digital Watch Wrist Watches With Date LED Stopwatch", "price": 20,500.00, "image": "/static/w9.jpg", "sizes": []},
+        {"id": 10, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30,811.00, "image": "/static/w10.jpg", "sizes": []}
     ]
 }
 
