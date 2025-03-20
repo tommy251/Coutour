@@ -5,7 +5,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv  # Add this import for .env file support
+from dotenv import load_dotenv
 
 # Load environment variables from .env file (optional)
 load_dotenv()
@@ -50,8 +50,7 @@ if not all([EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL]):
     else:
         raise ValueError("Email configuration (EMAIL_ADDRESS, EMAIL_PASSWORD, RECIPIENT_EMAIL) must be set in environment variables")
 
-# Manual product catalog with sizes as a list
-# Manual product catalog with options (replacing sizes)
+# Manual product catalog with options
 products = {
     "Clothes": [
         {"id": 1, "name": "Trendy Offwhite Up And Down Wears", "price": 20000.00, "image": "/static/c1.jpg", "options": ["S", "M", "L", "XL", "XXL", "XXXL"]},
@@ -123,7 +122,6 @@ def serve_static(path):
         return "Error serving static file", 500
 
 # Paystack Payment Route - Create Checkout Session
-# Paystack Payment Route - Create Checkout Session
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     data = request.get_json()
@@ -163,11 +161,28 @@ def create_checkout_session():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# New Route for Address Submission
+# Paystack Payment Route - Verify Payment
+@app.route('/verify-payment', methods=['GET'])
+def verify_payment():
+    reference = request.args.get('reference')
+    if not reference:
+        return redirect(url_for('serve_index', section='cancel'))
+
+    try:
+        response = paystack_transaction.verify(reference=reference)
+        if response['status'] and response['data']['status'] == 'success':
+            return redirect(url_for('serve_index', section='success'))
+        else:
+            return redirect(url_for('serve_index', section='cancel'))
+
+    except Exception as e:
+        return redirect(url_for('serve_index', section='cancel'))
+
+# Route for Address Submission
 @app.route('/submit_address', methods=['POST'])
 def submit_address():
     product_id = request.form.get('product_id')
-    selected_option = request.form.get('size')  # Update this to match the form field
+    selected_option = request.form.get('option')
     full_name = request.form.get('full_name')
     address_line1 = request.form.get('address_line1')
     address_line2 = request.form.get('address_line2')
@@ -211,89 +226,6 @@ def submit_address():
             callback_url='https://coutour.onrender.com/verify-payment',
             metadata={
                 "option": selected_option or "",
-                "full_name": full_name,
-                "address_line1": address_line1,
-                "address_line2": address_line2 or "",
-                "city": city,
-                "state": state,
-                "postal_code": postal_code,
-                "phone": phone
-            }
-        )
-
-        if response['status']:
-            return jsonify({'payment_url': response['data']['authorization_url']})
-        else:
-            return jsonify({'error': 'Failed to initialize payment'}), 500
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Paystack Payment Route - Verify Payment
-@app.route('/verify-payment', methods=['GET'])
-def verify_payment():
-    reference = request.args.get('reference')
-    if not reference:
-        return redirect(url_for('serve_index', section='cancel'))
-
-    try:
-        response = paystack_transaction.verify(reference=reference)
-        if response['status'] and response['data']['status'] == 'success':
-            return redirect(url_for('serve_index', section='success'))
-        else:
-            return redirect(url_for('serve_index', section='cancel'))
-
-    except Exception as e:
-        return redirect(url_for('serve_index', section='cancel'))
-
-# New Route for Address Submission
-@app.route('/submit_address', methods=['POST'])
-def submit_address():
-    product_id = request.form.get('product_id')
-    selected_size = request.form.get('size')
-    full_name = request.form.get('full_name')
-    address_line1 = request.form.get('address_line1')
-    address_line2 = request.form.get('address_line2')
-    city = request.form.get('city')
-    state = request.form.get('state')
-    postal_code = request.form.get('postal_code')
-    phone = request.form.get('phone')
-    email = request.form.get('email', "customer@example.com")  # Collect email from form
-
-    # Basic validation
-    if not all([product_id, full_name, address_line1, city, state, postal_code, phone, email]):
-        return jsonify({'error': 'All required fields must be filled'}), 400
-
-    product = next((item for category in products.values() for item in category if item['id'] == int(product_id)), None)
-    if not product:
-        return jsonify({'error': 'Product not found'}), 404
-
-    if not selected_size and product.get("sizes") and len(product.get("sizes")) > 0:
-        return jsonify({'error': 'Please select a size'}), 400
-
-    try:
-        # Store address details in session (optional, for later use)
-        session['order_details'] = {
-            'product_id': product_id,
-            'size': selected_size,
-            'full_name': full_name,
-            'address_line1': address_line1,
-            'address_line2': address_line2,
-            'city': city,
-            'state': state,
-            'postal_code': postal_code,
-            'phone': phone,
-            'email': email
-        }
-
-        # Initialize Paystack transaction with address metadata
-        response = paystack_transaction.initialize(
-            amount=int(product['price'] * 100),
-            email=email,
-            reference=f'contour_{product_id}_{int(os.urandom(8).hex(), 16)}',
-            callback_url='https://coutour.onrender.com/verify-payment',
-            metadata={
-                "size": selected_size or "",
                 "full_name": full_name,
                 "address_line1": address_line1,
                 "address_line2": address_line2 or "",
