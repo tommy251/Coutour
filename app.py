@@ -204,3 +204,8 @@ def verify_payment():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
+@app.after_request
+def add_header(response):
+    if 'static' in request.path:
+        response.headers['Cache-Control'] = 'public, max-age=31536000'  # Cache for 1 year
+    return response
