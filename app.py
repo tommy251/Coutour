@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from paystackapi.paystack import Paystack
 
 app = Flask(__name__)
@@ -59,6 +59,23 @@ products = {
         {"id": 40, "name": "Binbond Men's Fashion Mechanical Watch Waterproof Night Light Reinforced Wrist Watches - Bronze", "price": 30811.00, "image": "/static/w10.jpg", "options": ["Adults", "Teenager"]}
     ]
 }
+
+# Add caching headers for static files
+@app.after_request
+def add_header(response):
+    if 'static' in request.path:
+        response.headers['Cache-Control'] = 'public, max-age=31536000'  # Cache for 1 year
+    return response
+
+# Serve the service worker file
+@app.route('/static/sw.js')
+def serve_sw():
+    return send_from_directory('static', 'sw.js'), 200, {'Content-Type': 'application/javascript'}
+
+# Serve static files explicitly to ensure correct MIME types
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
 
 # Home Route
 @app.route('/')
@@ -204,11 +221,3 @@ def verify_payment():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
-@app.after_request
-def add_header(response):
-    if 'static' in request.path:
-        response.headers['Cache-Control'] = 'public, max-age=31536000'  # Cache for 1 year
-    return response
-@app.route('/static/sw.js')
-def serve_sw():
-    return app.send_static_file('sw.js'), 200, {'Content-Type': 'application/javascript'}
