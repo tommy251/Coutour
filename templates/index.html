@@ -129,7 +129,7 @@
     <!-- Home Section (ZOHO-Inspired Hero Section) -->
     <section id="home" class="section">
         <div class="hero-section">
-            <img src="/static/Man.webp" alt="Contour Hero Banner" class="hero-image" loading="lazy">
+            <img src="/static/Man.png" alt="Contour Hero Banner" class="hero-image" loading="lazy">
             <div class="hero-content">
                 <h1 class="contour-title">Contour</h1>
                 <a href="#shop" onclick="showSection('shop')" class="shop-now-btn">Shop Now</a>
@@ -141,11 +141,11 @@
             <h2>Explore Categories</h2>
             <div class="category-grid">
                 <div class="category-card">
-                    <img src="/static/men.webp" alt="Men's Clothing" loading="lazy">
+                    <img src="/static/men.jpeg" alt="Men's Clothing" loading="lazy">
                     <h3>Men's Clothing</h3>
                 </div>
                 <div class="category-card">
-                    <img src="/static/Blacksuit.webp" alt="Wristwatches" loading="lazy">
+                    <img src="/static/Blacksuit.jpeg" alt="Wristwatches" loading="lazy">
                     <h3>Wristwatches</h3>
                 </div>
             </div>
@@ -286,22 +286,27 @@
     <!-- Load JavaScript from script.js -->
     <script defer src="/static/script.min.js"></script>
     <script>
-        window.addEventListener('load', function() {
-            document.getElementById('loading').style.display = 'none';
+    window.addEventListener('load', function() {
+        document.getElementById('loading').style.display = 'none';
+    });
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('Service Worker registration failed:', error);
+                });
         });
 
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/static/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker registered:', registration);
-                    })
-                    .catch(error => {
-                        console.error('Service Worker registration failed:', error);
-                    });
-            });
-        }
+        // Listen for controller changes to reload the page if the service worker updates
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
+    }
     </script>
     <script>
     if ('serviceWorker' in navigator) {
