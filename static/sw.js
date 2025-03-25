@@ -1,9 +1,9 @@
-const CACHE_NAME = 'coutour-cache-v2'; // Updated cache name to force a refresh
+const CACHE_NAME = 'coutour-cache-v5'; // Updated to force a refresh
 const urlsToCache = [
     '/',
     '/static/styles.min.css',
-    '/static/script.min.js'
-    // Remove static image URLs since we'll cache them dynamically
+    '/static/script.min.js',
+    '/static/fallback.jpg' // Add a fallback image
 ];
 
 self.addEventListener('install', event => {
@@ -38,7 +38,7 @@ self.addEventListener('fetch', event => {
     const requestUrl = new URL(event.request.url);
 
     // Cache static images dynamically
-    if (requestUrl.pathname.startsWith('/static/') && /\.(webp|png|jpg|jpeg|gif)$/i.test(requestUrl.pathname)) {
+    if (requestUrl.pathname.startsWith('/static/') && /\.(jpg|png|jpeg|gif)$/i.test(requestUrl.pathname)) {
         event.respondWith(
             caches.match(event.request)
                 .then(response => {
@@ -59,8 +59,8 @@ self.addEventListener('fetch', event => {
                                 });
                         })
                         .catch(() => {
-                            // Fallback for offline scenarios (optional)
-                            return caches.match('/static/fallback.webp') || new Response('Image unavailable', { status: 404 });
+                            // Fallback for offline scenarios
+                            return caches.match('/static/fallback.jpg') || new Response('Image unavailable', { status: 404 });
                         });
                 })
         );
