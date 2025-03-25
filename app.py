@@ -209,3 +209,6 @@ def add_header(response):
     if 'static' in request.path:
         response.headers['Cache-Control'] = 'public, max-age=31536000'  # Cache for 1 year
     return response
+@app.route('/static/sw.js')
+def serve_sw():
+    return app.send_static_file('sw.js'), 200, {'Content-Type': 'application/javascript'}
